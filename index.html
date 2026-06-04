@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinearViz — 线性代数可视化教学</title>
+    <meta name="description" content="以交互式可视化方式学习线性代数，从原理到工程应用">
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#faf8f5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="LinearViz">
+    <link rel="apple-touch-icon" href="assets/icon.svg">
+
+    <!-- KaTeX for math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+    <!-- Tone.js for audio -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
+    <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Audio control -->
+    <div id="audio-control" class="audio-control" title="开启音效">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+        </svg>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="main-nav" id="mainNav">
+        <div class="nav-brand">
+            <span class="brand-icon">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                    <rect x="2" y="2" width="10" height="10" rx="2" fill="currentColor" opacity="0.8"/>
+                    <rect x="16" y="2" width="10" height="10" rx="2" fill="currentColor" opacity="0.5"/>
+                    <rect x="2" y="16" width="10" height="10" rx="2" fill="currentColor" opacity="0.5"/>
+                    <rect x="16" y="16" width="10" height="10" rx="2" fill="currentColor" opacity="0.3"/>
+                </svg>
+            </span>
+            <span class="brand-text">LinearViz</span>
+        </div>
+        <div class="nav-links">
+            <a href="#hero" class="nav-link active" data-section="hero">首页</a>
+            <a href="#principles" class="nav-link" data-section="principles">原理拆解</a>
+            <a href="#applications" class="nav-link" data-section="applications">工程应用</a>
+            <a href="#playground" class="nav-link" data-section="playground">交互实验室</a>
+        </div>
+        <div class="nav-progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-bg">
+            <canvas id="heroCanvas"></canvas>
+        </div>
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="badge-dot"></span>
+                交互式可视化教学平台
+            </div>
+            <h1 class="hero-title">
+                <span class="title-line">让线性代数</span>
+                <span class="title-line gradient-text">看得见，摸得着</span>
+            </h1>
+            <p class="hero-subtitle">
+                从抽象的符号到直观的图像，从枯燥的公式到生动的动画。<br>
+                用交互式可视化重新定义线性代数的学习体验。
+            </p>
+            <div class="hero-actions">
+                <a href="#principles" class="btn btn-primary">
+                    开始学习
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+                <a href="#playground" class="btn btn-glass">
+                    交互实验室
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-num">6</span>
+                    <span class="stat-label">核心章节</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-num">30+</span>
+                    <span class="stat-label">交互演示</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-num">∞</span>
+                    <span class="stat-label">探索可能</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-scroll-hint">
+            <div class="scroll-mouse">
+                <div class="scroll-wheel"></div>
+            </div>
+            <span>向下滚动探索</span>
+        </div>
+    </section>
+
+    <!-- Principles Section -->
+    <section class="section section-principles" id="principles">
+        <div class="section-header">
+            <span class="section-tag">Part 01</span>
+            <h2 class="section-title">知识点原理拆解</h2>
+            <p class="section-desc">从几何直觉出发，理解每一个公式背后的意义</p>
+        </div>
+
+        <div class="topic-grid">
+            <!-- Vectors -->
+            <article class="topic-card" data-topic="vectors">
+                <div class="card-visual">
+                    <canvas id="vectorPreview"></canvas>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <span class="card-num">01</span>
+                        <span class="card-badge">基础</span>
+                    </div>
+                    <h3 class="card-title">向量</h3>
+                    <p class="card-desc">从有向线段到高维空间，理解向量加法的平行四边形法则、点积与叉积的几何意义。</p>
+                    <a href="#topic-vectors" class="card-link">
+                        探索向量世界
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+            </article>
+
+            <!-- Matrices -->
+            <article class="topic-card" data-topic="matrices">
+                <div class="card-visual">
+                    <canvas id="matrixPreview"></canvas>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <span class="card-num">02</span>
+                        <span class="card-badge">核心</span>
+                    </div>
+                    <h3 class="card-title">矩阵</h3>
+                    <p class="card-desc">矩阵不仅是数字的排列，更是线性变换的紧凑表达。探索矩阵乘法、转置与逆矩阵。</p>
+                    <a href="#topic-matrices" class="card-link">
+                        深入矩阵运算
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+            </article>
+
+            <!-- Linear Transformations -->
+            <article class="topic-card" data-topic="transforms">
+                <div class="card-visual">
+                    <canvas id="transformPreview"></canvas>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <span class="card-num">03</span>
+                        <span class="card-badge">进阶</span>
+                    </div>
+                    <h3 class="card-title">线性变换</h3>
+                    <p class="card-desc">旋转、缩放、剪切、投影——一切线性变换都可以用矩阵描述。看空间如何被优雅地重塑。</p>
+                    <a href="#topic-transforms" class="card-link">
+                        观察空间变形
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+            </article>
+
+            <!-- Determinants -->
+            <article class="topic-card" data-topic="determinants">
+                <div class="card-visual">
+                    <canvas id="determinantPreview"></canvas>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <span class="card-num">04</span>
+                        <span class="card-badge">进阶</span>
+                    </div>
+                    <h3 class="card-title">行列式</h3>
+                    <p class="card-desc">行列式衡量线性变换对空间的缩放程度。一个数字，蕴含着体积变化的全部信息。</p>
+                    <a href="#topic-determinants" class="card-link">
+                        解读缩放因子
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+            </article>
+
+            <!-- Eigenvalues -->
+            <article class="topic-card" data-topic="eigen">
+                <div class="card-visual">
+                    <canvas id="eigenPreview"></canvas>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <span class="card-num">05</span>
+                        <span class="card-badge">高级</span>
+                    </div>
+                    <h3 class="card-title">特征值与特征向量</h3>
+                    <p class="card-desc">在变幻莫测的变换中，寻找那些坚守方向的"不变量"。理解PCA、振动分析的核心。</p>
+                    <a href="#topic-eigen" class="card-link">
+                        发现不变量
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <!-- Vector Detail Section -->
+    <section class="section section-detail" id="topic-vectors">
+        <div class="detail-container">
+            <div class="detail-header">
+                <span class="detail-tag">Chapter 01</span>
+                <h2 class="detail-title">向量：有向线段与高维世界的语言</h2>
+            </div>
+            <div class="detail-body">
+                <div class="detail-text">
+                    <div class="concept-block">
+                        <h3>什么是向量？</h3>
+                        <p>想象你在地图上走路：从家出发，向东走3公里，再向北走4公里。这个"走了多远、朝哪个方向"的信息，就是<strong>向量</strong>。</p>
+                        <p>向量由两部分组成：<strong>大小</strong>（走了多远）和<strong>方向</strong>（朝哪走）。在数学上，我们用一组数字来表示它，比如 [3, 4] 就代表了"向东3、向北4"。</p>
+                        <div class="formula">$$ \vec{v} = \begin{bmatrix} 3 \\ 4 \end{bmatrix} $$</div>
+                        <div class="exercise-block" data-exercise="v1">
+                            <div class="exercise-header">
+                                <span class="exercise-badge easy">入门</span>
+                                <span class="exercise-title">向量的直观理解</span>
+                            </div>
+                            <p class="exercise-desc">小明从原点出发，先向东走2步，再向北走2步。他的位移向量是什么？</p>
+                            <div class="exercise-choices">
+                                <div class="choice-item" data-choice="A" onclick="checkAnswer(this, 'A', 'v1')">
+                                    <span class="choice-letter">A</span>
+                                    <span>[2, 2]</span>
+                                </div>
+                                <div class="choice-item" data-choice="B" onclick="checkAnswer(this, 'B', 'v1')">
+                                    <span class="choice-letter">B</span>
+                                    <span>[4, 0]</span>
+                                </div>
+                                <div class="choice-item" data-choice="C" onclick="checkAnswer(this, 'C', 'v1')">
+                                    <span class="choice-letter">C</span>
+                                    <span>[0, 4]</span>
+                                </div>
+                            </div>
+                            <div class="exercise-feedback" id="feedback-v1"></div>
+                        </div>
+                    </div>
+                    <div class="concept-block">
+                        <h3>向量加法 — 两段路连起来走</h3>
+                        <p>如果你先沿着向量 $\vec{a}$ 走，再沿着向量 $\vec{b}$ 走，最终的效果等价于沿着一个新的向量 $\vec{a} + \vec{b}$ 走。这就像"先走一段、再走一段"等于"直接走总路程"。</p>
+                        <p>计算方法很简单：对应分量相加。几何上，把两个向量首尾相接，从起点到终点的对角线就是和向量（平行四边形法则）。</p>
+                        <div class="formula">$$ \vec{a} + \vec{b} = \begin{bmatrix} a_1 + b_1 \\ a_2 + b_2 \end{bmatrix} $$</div>
+                        <div class="exercise-block" data-exercise="v2">
+                            <div class="exercise-header">
+                                <span class="exercise-badge easy">入门</span>
+                                <span class="exercise-title">向量加法计算</span>
+                            </div>
+                            <p class="exercise-desc">已知 $\vec{a} = [1, 3]$，$\vec{b} = [4, 2]$，求 $\vec{a} + \vec{b}$。</p>
+                            <div class="exercise-choices">
+                                <div class="choice-item" data-choice="A" onclick="checkAnswer(this, 'B', 'v2')">
+                                    <span class="choice-letter">A</span>
+                                    <span>[1, 3]</span>
+                                </div>
+                                <div class="choice-item" data-choice="B" onclick="checkAnswer(this, 'B', 'v2')">
+                                    <span class="choice-letter">B</span>
+                                    <span>[5, 5]</span>
+                                </div>
+                                <div class="choice-item" data-choice="C" onclick="checkAnswer(this, 'B', 'v2')">
+                                    <span class="choice-letter">C</span>
+                                    <span>[4, 6]</span>
+                                </div>
+                            </div>
+                            <div class="exercise-feedback" id="feedback-v2"></div>
+                        </div>
+                    </div>
+                    <div class="concept-block">
+                        <h3>数乘 — 把向量拉长或缩短</h3>
+                        <p>用一个数字乘以向量，就是把这个向量的长度按比例缩放。数字大于1时拉长，0到1之间时缩短，负数时反向。</p>
+                        <p>比如 $2\vec{v}$ 就是沿着 $\vec{v}$ 的方向走两倍的距离。$-\vec{v}$ 就是沿着相反的方向走同样的距离。</p>
+                        <div class="formula">$$ k\vec{v} = \begin{bmatrix} kv_1 \\ kv_2 \end{bmatrix} $$</div>
+                    </div>
+                    <div class="concept-block">
+                        <h3>点积（内积）— 两个向量有多"像"</h3>
+                        <p>点积回答了一个问题：两个向量指向的方向有多接近？</p>
+                        <p>你可以这样理解：把向量 $\vec{a}$ 投影到 $\vec{b}$ 的方向上，看投影有多长，再乘以 $\vec{b}$ 自己的长度。如果两个向量完全同向，点积最大；完全垂直，点积为零；完全反向，点积为负。</p>
+                        <div class="formula">$$ \vec{a} \cdot \vec{b} = a_1b_1 + a_2b_2 = |\vec{a}||\vec{b}|\cos\theta $$</div>
+                        <div class="exercise-block" data-exercise="v3">
+                            <div class="exercise-header">
+                                <span class="exercise-badge medium">进阶</span>
+                                <span class="exercise-title">点积的几何意义</span>
+                            </div>
+                            <p class="exercise-desc">向量 $\vec{a} = [1, 0]$ 与 $\vec{b} = [0, 1]$ 的点积是多少？这说明了什么？</p>
+                            <div class="exercise-choices">
+                                <div class="choice-item" data-choice="A" onclick="checkAnswer(this, 'A', 'v3')">
+                                    <span class="choice-letter">A</span>
+                                    <span>0，说明两向量垂直</span>
+                                </div>
+                                <div class="choice-item" data-choice="B" onclick="checkAnswer(this, 'A', 'v3')">
+                                    <span class="choice-letter">B</span>
+                                    <span>1，说明两向量同向</span>
+                                </div>
+                                <div class="choice-item" data-choice="C" onclick="checkAnswer(this, 'A', 'v3')">
+                                    <span class="choice-letter">C</span>
+                                    <span>-1，说明两向量反向</span>
+                                </div>
+                            </div>
+                            <div class="exercise-feedback" id="feedback-v3"></div>
+                        </div>
+                        <div class="exercise-block" data-exercise="v4">
+                            <div class="exercise-header">
+                                <span class="exercise-badge hard">挑战</span>
+                                <span class="exercise-title">向量的实际应用</span>
+                            </div>
+                            <p class="exercise-desc">在导航中，一艘船先以向量 $[3, 4]$ 航行，遇到水流影响，水流向量为 $[1, -2]$。船的实际位移向量是什么？</p>
+                            <div class="exercise-choices">
+                                <div class="choice-item" data-choice="A" onclick="checkAnswer(this, 'A', 'v4')">
+                                    <span class="choice-letter">A</span>
+                                    <span>[4, 2]</span>
+                                </div>
+                                <div class="choice-item" data-choice="B" onclick="checkAnswer(this, 'A', 'v4')">
+                                    <span class="choice-letter">B</span>
+                                    <span>[3, -2]</span>
+                                </div>
+                                <div class="choice-item" data-choice="C" onclick="checkAnswer(this, 'A', 'v4')">
+                                    <span class="choice-letter">C</span>
+                                    <span>[2, 6]</span>
+                                </div>
+                            </div>
+                            <div class="exercise-feedback" id="feedback-v4"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="detail-visual">
+                    <div class="viz-panel glass-panel">
+                        <div class="viz-toolbar">
+                            <button class="viz-btn active" data-viz="addition">加法演示</button>
+                            <button class="viz-btn" data-viz="scaling">数乘演示</button>
+                            <button class="viz-btn" data-viz="dot">点积演示</button>
+                        </div>
+                        <canvas id="vectorViz"></canvas>
+                        <div class="viz-controls">
+                            <div class="control-group">
+                                <label>向量 A 角度</label>
+                                <input type="range" id="vecAAngle" min="0" max="360" value="45">
+                                <span class="control-value">45°</span>
+                            </div>
+                            <div class="control-group">
+                                <label>向量 B 角度</label>
+                                <input type="range" id="vecBAngle" min="0" max="360" value="135">
+                                <span class="control-value">135°</span>
+                            </div>
+                            <div class="control-group">
+                                <label>缩放倍数</label>
+                                <input type="range" id="vecScale" min="0.5" max="2" step="0.1" value="1">
+                                <span class="control-value">1.0x</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Matrix Detail Section -->
+    <section class="section section-detail" id="topic-matrices">
+        <div class="detail-container">
+            <div class="detail-header">
+                <span class="detail-tag">Chapter 02</span>
+                <h2 class="detail-title">矩阵：线性变换的紧凑编码</h2>
+            </div>
+            <div class="detail-body">
+                <div class="detail-text">
+                    <div class="concept-block">
+                        <h3>矩阵是什么？一张"变形配方表"</h3>
+                        <p>想象你有一张<strong>变形配方表</strong>，上面记录了"如何把平面上的每一个点变换到新位置"。矩阵就是这样的配方表。</p>
+                        <p>一个 2x2 矩阵有两列，第一列告诉你"原来指向右边的单位向量被变到了哪里"，第二列告诉你"原来指向上边的单位向量被变到了哪里"。知道了这两个，你就知道了整个平面的变形方式。</p>
+                        <div class="formula">$$ A = \begin{bmatrix} a_{11} & a_{12} \\ a_{21} & a_{22} \end{bmatrix} $$</div>
+                        <div class="exercise-block" data-exercise="m1">
+                            <div class="exercise-header">
+                                <span class="exercise-badge easy">入门</span>
+                                <span class="exercise-title">理解矩阵的结构</span>
+                            </div>
+                            <p class="exercise-desc">矩阵 $\begin{bmatrix} 2 & 0 \\ 0 & 2 \end{bmatrix}$ 的第一列 $[2, 0]$ 表示什么意思？</p>
+                            <div class="exercise-choices">
+                                <div class="choice-item" data-choice="A" onclick="checkAnswer(this, 'B', 'm1')">
+                                    <span class="choice-letter">A</span>
+                                    <span>原来的(0,1)向量被变到了(2,0)</span>
+                                </div>
+                                <div class="choice-item" data-choice="B" onclick="checkAnswer(this, 'B', 'm1')">
+                                    <span class="choice-letter">B</span>
+                                    <span>原来的(1,0)向量被变到了(2,0)</span>
+                                </div>
+                                <div class="choice-item" data-choice="C" onclick="checkAnswer(this, 'B', 'm1')">
+                                    <span class="choice-letter">C</span>
+                                    <span>所有向量都被旋转了</span>
+                                </div>
+                            </div>
+                            <div class="exercise-feedback" id="feedback-m1"></div>
+                        </div>
+                    </div>
+                    <div class="concept-block">
+                        <h3>矩阵乘法 — "先变形A，再变形B"</h3>
+                        <p>矩阵乘法的意思是：先做一个变换，再做另一个变换。注意顺序很重要！$AB$ 表示"先做B，再做A"。</p>
+                        <p>就像化妆：先涂粉底再画眼影，和先画眼影再涂粉底，结果完全不同。矩阵乘法也是一样的道理——顺序不可交换。</p>
+                        <div class="formula">$$ AB = \begin{bmatrix} a_{11}b_{11}+a_{12}b_{21} & a_{11}b_{12}+a_{12}b_{22} \\ a_{21}b_{11}+a_{22}b_{21} & a_{21}b_{12}+a_{22}b_{22} \end{bmatrix} $$</div>
+                    </div>
+                    <div class="concept-block">
+                        <h3>单位矩阵 — "什么都不做"</h3>
+                        <p>单位矩阵 $I$ 就像乘法中的1：任何矩阵乘以它，都保持不变。它表示"不做任何变换"。</p>
+                        <div class="formula">$$ I = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} $$</div>
+                        <div class="exercise-block" data-exercise="m2">
+                            <div class="exercise-header">
+                                <span class="exercise-badge easy">入门</span>
+                                <span class="exercise-title">矩阵乘法基础</span>
+                            </div>
+                            <p class="exercise-desc">计算：$\begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix} \times \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}$</p>
+                            <div class="exercise-choices">
+                                <div class="choice-item" data-choice="A" onclick="checkAnswer(this, 'A', 'm2')">
+                                    <span class="choice-letter">A</span>
+                                    <span>$\begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix}$</span>
+                                </div>
+                                <div class="choice-item" data-choice="B" onclick="checkAnswer(this, 'A', 'm2')">
+                                    <span class="choice-letter">B</span>
+                                    <span>$\begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}$</span>
+                                </div>
+                                <div class="choice-item" data-choice="C" onclick="checkAnswer(this, 'A', 'm2')">
+                                    <span class="choice-letter">C</span>
+                                    <span>$\begin{bmatrix} 2 & 2 \\ 3 & 5 \end{bmatrix}$</span>
+                                </div>
+                            </div>
+                            <div class="exercise-feedback" id="feedback-m2"></div>
+                        </div>
+                        <div class="exercise-block" data-exercise="m3">
+                            <div class="exercise-header">
+                                <span class="exercise-badge medium">进阶</span>
+                                <span class="exercise-title">矩阵乘法的顺序</span>
+                            </div>
+                            <p class="exercise-desc">设 $A = \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix}$，$B = \begin{bmatrix} 1 & 0 \\ 1 & 1 \end{bmatrix}$。$AB$ 是否等于 $BA$？</p>
+                            <div class="exercise-choices">
+                                <div class="choice-item" data-choice="A" onclick="checkAnswer(this, 'B', 'm3')">
+                                    <span class="choice-letter">A</span>
+                                    <span>是，总是相等</span>
+                                </div>
+                                <div class="choice-item" data-choice="B" onclick="checkAnswer(this, 'B', 'm3')">
+                                    <span class="choice-letter">B</span>
+                                    <span>否，矩阵乘法一般不满足交换律</span>
+                                </div>
+                                <div class="choice-item" data-choice="C" onclick="checkAnswer(this, 'B', 'm3')">
+                                    <span class="choice-letter">C</span>
+                                    <span>只有当都是单位矩阵时才不相等</span>
+                                </div>
+                            </div>
+                            <div class="exercise-feedback" id="feedback-m3"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="detail-visual">
+                    <div class="viz-panel glass-panel">
+                        <div class="viz-toolbar">
+                            <button class="viz-btn active" data-viz="multiply">矩阵乘法</button>
+                            <button class="viz-btn" data-viz="transform">变换效果</button>
+                        </div>
+                        <canvas id="matrixViz"></canvas>
+                        <div class="viz-controls">
+                            <div class="matrix-inputs">
+                                <div class="matrix-editor">
+                                    <span class="matrix-bracket">[</span>
+                                    <div class="matrix-cells">
+                                        <input type="number" id="m00" value="1" step="0.1">
+                                        <input type="number" id="m01" value="0" step="0.1">
+                                        <input type="number" id="m10" value="0" step="0.1">
+                                        <input type="number" id="m11" value="1" step="0.1">
+                                    </div>
+                                    <span class="matrix-bracket">]</span>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label>动画速度</label>
+                                <input type="range" id="matrixAnimSpeed" min="0.1" max="2" step="0.1" value="1">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Transform Detail Section -->
+    <section class="section section-detail" id="topic-transforms">
+        <div class="detail-container">
+            <div class="detail-header">
+                <span class="detail-tag">Chapter 03</span>
+                <h2 class="detail-title">线性变换：重塑空间的艺术</h2>
+            </div>
+            <div class="detail-body">
+                <div class="detail-text">
+                    <div class="concept-block">
+                        <h3>线性变换 — "把空间整体变形"</h3>
+                        <p>想象你有一张<strong>橡皮筋网格</strong>，上面画满了直线和正方形。线性变换就是对这个网格做"均匀拉伸、旋转或剪切"，但保持几个关键性质：</p>
+                        <p>（1）原点不动；（2）直线还是直线；（3）平行线仍然平行。就像推一堵由橡皮筋组成的墙，它会被拉伸变形，但不会突然断裂或扭曲成曲线。</p>
+                        <div class="exercise-block" data-exercise="t0">
+                            <div class="exercise-header">
+                                <span class="exercise-badge easy">入门</span>
+                                <span class="exercise-title">理解线性变换</span>
+                            </div>
+                            <p class="exercise-desc">以下哪种操作<strong>不是</strong>线性变换？</p>
+                            <div class="exercise-choices">
+                                <div class="choice-item" data-choice="A" onclick="checkAnswer(this, 'A', 't0')">
+                                    <span class="choice-letter">A</span>
+                                    <span>将整个平面平移（所有点向右移动2个单位）</span>
+                                </div>
+                                <div class="choice-item" data-choice="B" onclick="checkAnswer(this, 'A', 't0')">
+                                    <span class="choice-letter">B</span>
+                                    <span>将平面上的所有点绕原点旋转45度</span>
+                                </div>
+                                <div class="choice-item" data-choice="C" onclick="checkAnswer(this, 'A', 't0')">
+                                    <span class="choice-letter">C</span>
+                                    <span>将平面沿X轴方向放大2倍</span>
+                                </div>
+                            </div>
+                            <div class="exercise-feedback" id="feedback-t0"></div>
+                        </div>
+                    </div>
+                    <div class="concept-block">
+                        <h3>旋转变换 — "原地转圈"</h3>
+                        <p>把平面上的所有点绕原点旋转角度 $\theta$。就像你把一张画着网格的纸钉在原点，然后旋转它。</p>
+                        <p>旋转矩阵由正弦和余弦组成。$\cos\theta$ 控制旋转后的投影长度，$\sin\theta$ 控制侧向偏移。有趣的是，旋转不会改变任何面积！</p>
+                        <div class="formula">$$ R(\theta) = \begin{bmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{bmatrix} $$</div>
+                        <div class="exercise-block" data-exercise="t1">
+                            <div class="exercise-header">
+                                <span class="exercise-badge easy">入门</span>
+                                <span class="exercise-title">旋转变换矩阵</span>
+                            </div>
+                            <p class="exercise-desc">旋转90度的变换矩阵是什么？（提示：$\cos 90° = 0$，$\sin 90° = 1$）</p>
+                            <div class="exercise-choices">
+                                <div class="choice-item" data-choice="A" onclick="checkAnswer(this, 'A', 't1')">
+                                    <span class="choice-letter">A</span>
+                                    <span>$\begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix}$</span>
+                                </div>
+                                <div class="choice-item" data-choice="B" onclick="checkAnswer(this, 'A', 't1')">
+                                    <span class="choice-letter">B</span>
+                                    <span>$\begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}$</span>
+                                </div>
+                                <div class="choice-item" data-choice="C" onclick="checkAnswer(this, 'A', 't1')">
+                                    <span class="choice-letter">C</span>
+                                    <span>$\begin{bmatrix} 0 & 1 \\ -1 & 0 \end{bmatrix}$</span>
+                                </div>
+                            </div>
+                            <div class="exercise-feedback" id="feedback-t1"></div>
+                        </div>
+                    </div>
+                    <div class="concept-block">
+                        <h3>缩放变换 — "拉伸与压缩"</h3>
+                        <p>沿坐标轴方向拉伸或压缩空间。X轴方向缩放 $s_x$ 倍，Y轴方向缩放 $s_y$ 倍。如果 $s_x = s_y$，就是均匀的放大或缩小；如果不相等，图形会被"压扁"成椭圆。</p>
+                        <div class="formula">$$ S(s_x, s_y) = \begin{bmatrix} s_x & 0 \\ 0 & s_y \end{bmatrix} $$</div>
+                    </div>
+                    <div class="concept-block">
+                        <h3>剪切变换 — "推斜一摞扑克牌"</h3>
+                        <p>想象一摞整齐的扑克牌，你从顶部横向推了一下。底部不动，顶部的牌被推到旁边。这就是剪切变换。</p>
+                        <p>剪切矩阵会让X坐标受到Y坐标的影响（或者反过来），从而产生"倾斜"的效果。斜体字体的生成就是剪切变换的应用。</p>
+                        <div class="formula">$$ H(k) = \begin{bmatrix} 1 & k \\ 0 & 1 \end{bmatrix} $$</div>
+                        <div class="exercise-block" data-exercise="t2">
+                            <div class="exercise-header">
+                                <span class="exercise-badge hard">挑战</span>
+                                <span class="exercise-title">复合变换分析</span>
+                            </div>
+                            <p class="exercise-desc">先旋转45度，再沿X轴放大2倍。这个结果和"先放大2倍，再旋转45度"相同吗？</p>
+                            <div class="exercise-choices">
+                                <div class="choice-item" data-choice="A" onclick="checkAnswer(this, 'B', 't2')">
+                                    <span class="choice-letter">A</span>
+                                    <span>相同，变换顺序不影响结果</span>
+                                </div>
+                                <div class="choice-item" data-choice="B" onclick="checkAnswer(this, 'B', 't2')">
+                                    <span class="choice-letter">B</span>
+                                    <span>不同，旋转和缩放的复合不满足交换律</span>
+                                </div>
+                                <div class="choice-item" data-choice="C" onclick="checkAnswer(this, 'B', 't2')">
+                                    <span class="choice-letter">C</span>
+                                    <span>只有当旋转角度是90度的倍数时才不同</span>
+                                </div>
+                            </div>
+                            <div class="exercise-feedback" id="feedback-t2"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="detail-visual">
+                    <div class="viz-panel glass-panel">
+                        <div class="viz-toolbar">
+                            <button class="viz-btn active" data-viz="rotate">旋转</button>
+                            <button class="viz-btn" data-viz="scale">缩放</button>
+                            <button class="viz-btn" data-viz="shear">剪切</button>
+                            <button class="viz-btn" data-viz="compose">复合变换</button>
+                        </div>
+                        <canvas id="transformViz"></canvas>
+                        <div class="viz-controls">
+                            <div class="control-group" id="rotateControl">
+                                <label>旋转角度</label>
+                                <input type="range" id="rotateAngle" min="0" max="360" value="30">
+                                <span class="control-value">30°</span>
+                            </div>
+                            <div class="control-group" id="scaleControl" style="display:none;">
+                                <label>X缩放</label>
+                                <input type="range" id="scaleX" min="0.3" max="2" step="0.1" value="1">
+                                <span class="control-value">1.0</span>
+                                <label>Y缩放</label>
+                                <input type="range" id="scaleY" min="0.3" max="2" step="0.1" value="1">
+                                <span class="control-value">1.0</span>
+                            </div>
+                            <div class="control-group" id="shearControl" style="display:none;">
+                                <label>剪切系数</label>
+                                <input type="range" id="shearK" min="-2" max="2" step="0.1" value="0.5">
+                                <span class="control-value">0.5</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Determinant Detail Section -->
+    <section class="section section-detail" id="topic-determinants">
+        <div class="detail-container">
+            <div class="detail-header">
+                <span class="detail-tag">Chapter 04</span>
+                <h2 class="detail-title">行列式：空间缩放的度量</h2>
+            </div>
+            <div class="detail-body">
+                <div class="detail-text">
+                    <div class="concept-block">
+                        <h3>行列式 — "变形前后的面积比"</h3>
+                        <p>想象你有一个边长为1的正方形，面积是1。经过一个线性变换后，它变成了一个平行四边形。行列式就是<strong>新平行四边形的面积</strong>！</p>
+                        <p>行列式为2，意味着变换让所有面积放大2倍；行列式为0.5，意味着面积缩小一半。如果行列式是负数，说明空间被"翻转"了（就像把一张纸翻到背面）。</p>
+                        <div class="formula">$$ \det(A) = a_{11}a_{22} - a_{12}a_{21} $$</div>
+                        <div class="exercise-block" data-exercise="d1">
+                            <div class="exercise-header">
+                                <span class="exercise-badge easy">入门</span>
+                                <span class="exercise-title">行列式计算</span>
+                            </div>
+                            <p class="exercise-desc">计算矩阵 $\begin{bmatrix} 2 & 0 \\ 0 & 3 \end{bmatrix}$ 的行列式。</p>
+                            <div class="exercise-choices">
+                                <div class="choice-item" data-choice="A" onclick="checkAnswer(this, 'B', 'd1')">
+                                    <span class="choice-letter">A</span>
+                                    <span>5</span>
+                                </div>
+                                <div class="choice-item" data-choice="B" onclick="checkAnswer(this, 'B', 'd1')">
+                                    <span class="choice-letter">B</span>
+                                    <span>6</span>
+                                </div>
+                                <div class="choice-item" data-choice="C" onclick="checkAnswer(this, 'B', 'd1')">
+                                    <span class="choice-letter">C</span>
+                                    <span>-1</span>
+                                </div>
+                            </div>
+                            <div class="exercise-feedback" id="feedback-d1"></div>
+                        </div>
+                    </div>
+                    <div class="concept-block">
+                        <h3>行列式为零 — "信息被压扁了"</h3>
+                        <p>当行列式为0，意味着变换把平面"压扁"成了一条线（甚至一个点）。原本不同的点被映射到了同一个位置，<strong>信息丢失了</strong>。</p>
+                        <p>这就像把一张照片从3D压成2D——你永远无法从2D照片恢复出原始的3D信息。所以行列式为0的矩阵<strong>不可逆</strong>。</p>
+                        <div class="exercise-block" data-exercise="d2">
+                            <div class="exercise-header">
+                                <span class="exercise-badge medium">进阶</span>
+                                <span class="exercise-title">行列式的意义</span>
+                            </div>
+                            <p class="exercise-desc">矩阵 $\begin{bmatrix} 1 & 2 \\ 2 & 4 \end{bmatrix}$ 的行列式为0。这说明了什么？</p>
+                            <div class="exercise-choices">
+                                <div class="choice-item" data-choice="A" onclick="checkAnswer(this, 'B', 'd2')">
+                                    <span class="choice-letter">A</span>
+                                    <span>变换后面积变为0，即空间被压扁到一条直线上</span>
+                                </div>
+                                <div class="choice-item" data-choice="B" onclick="checkAnswer(this, 'B', 'd2')">
+                                    <span class="choice-letter">B</span>
+                                    <span>以上两个都对</span>
+                                </div>
+                                <div class="choice-item" data-choice="C" onclick="checkAnswer(this, 'B', 'd2')">
+                                    <span class="choice-letter">C</span>
+                                    <span>该矩阵不存在逆矩阵</span>
+                                </div>
+                            </div>
+                            <div class="exercise-feedback" id="feedback-d2"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="detail-visual">
+                    <div class="viz-panel glass-panel">
+                        <div class="viz-toolbar">
+                            <button class="viz-btn active" data-viz="area">面积变化</button>
+                            <button class="viz-btn" data-viz="3d">3D体积</button>
+                        </div>
+                        <canvas id="determinantViz"></canvas>
+                        <div class="viz-controls">
+                            <div class="matrix-inputs">
+                                <div class="matrix-editor">
+                                    <span class="matrix-bracket">[</span>
+                                    <div class="matrix-cells">
+                                        <input type="number" id="d00" value="2" step="0.1">
+                                        <input type="number" id="d01" value="1" step="0.1">
+                                        <input type="number" id="d10" value="0.5" step="0.1">
+                                        <input type="number" id="d11" value="1.5" step="0.1">
+                                    </div>
+                                    <span class="matrix-bracket">]</span>
+                                </div>
+                            </div>
+                            <div class="det-display">
+                                <span class="det-label">行列式 =</span>
+                                <span class="det-value" id="detValue">2.50</span>
+                                <span class="det-desc" id="detDesc">面积放大2.5倍</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Eigen Detail Section -->
+    <section class="section section-detail" id="topic-eigen">
+        <div class="detail-container">
+            <div class="detail-header">
+                <span class="detail-tag">Chapter 05</span>
+                <h2 class="detail-title">特征值与特征向量：变换中的不变者</h2>
+            </div>
+            <div class="detail-body">
+                <div class="detail-text">
+                    <div class="concept-block">
+                        <h3>特征向量 — "变形中坚守方向的勇士"</h3>
+                        <p>想象一场大地震，地面被扭曲变形。大多数方向上的建筑都被推歪了，但<strong>有些特殊方向上的建筑只是被拉长或压扁，方向本身没有改变</strong>。这些特殊方向就是<strong>特征向量</strong>。</p>
+                        <p>特征向量告诉我们：在千变万化的变换中，哪些方向是"不变量"？理解了这些不变的方向，你就抓住了这个变换最核心的结构。</p>
+                        <div class="formula">$$ A\vec{v} = \lambda\vec{v} $$</div>
+                        <div class="exercise-block" data-exercise="e1">
+                            <div class="exercise-header">
+                                <span class="exercise-badge easy">入门</span>
+                                <span class="exercise-title">理解特征值</span>
+                            </div>
+                            <p class="exercise-desc">如果 $A\vec{v} = 3\vec{v}$，说明特征值 $\lambda = 3$。这表示特征向量 $\vec{v}$ 在变换后发生了什么？</p>
+                            <div class="exercise-choices">
+                                <div class="choice-item" data-choice="A" onclick="checkAnswer(this, 'A', 'e1')">
+                                    <span class="choice-letter">A</span>
+                                    <span>方向不变，长度变为原来的3倍</span>
+                                </div>
+                                <div class="choice-item" data-choice="B" onclick="checkAnswer(this, 'A', 'e1')">
+                                    <span class="choice-letter">B</span>
+                                    <span>方向反转，长度不变</span>
+                                </div>
+                                <div class="choice-item" data-choice="C" onclick="checkAnswer(this, 'A', 'e1')">
+                                    <span class="choice-letter">C</span>
+                                    <span>方向旋转了90度</span>
+                                </div>
+                            </div>
+                            <div class="exercise-feedback" id="feedback-e1"></div>
+                        </div>
+                    </div>
+                    <div class="concept-block">
+                        <h3>特征值 — "拉伸的倍数"</h3>
+                        <p>特征值 $\lambda$ 表示特征向量在变换中被拉伸了多少倍：</p>
+                        <p>• $\lambda > 1$：被<strong>拉长</strong>（就像橡皮筋被抻开）<br>• $0 < \lambda < 1$：被<strong>压缩</strong>（就像弹簧被压紧）<br>• $\lambda = 0$：被<strong>压没了</strong>（这个方向上信息完全丢失）<br>• $\lambda < 0$：<strong>反向</strong>拉伸（不仅长度变了，方向也反了）</p>
+                        <div class="exercise-block" data-exercise="e2">
+                            <div class="exercise-header">
+                                <span class="exercise-badge medium">进阶</span>
+                                <span class="exercise-title">特征值与变换</span>
+                            </div>
+                            <p class="exercise-desc">旋转90度的变换矩阵 $\begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix}$ 在实数范围内有特征向量吗？</p>
+                            <div class="exercise-choices">
+                                <div class="choice-item" data-choice="A" onclick="checkAnswer(this, 'B', 'e2')">
+                                    <span class="choice-letter">A</span>
+                                    <span>有，任何向量都是特征向量</span>
+                                </div>
+                                <div class="choice-item" data-choice="B" onclick="checkAnswer(this, 'B', 'e2')">
+                                    <span class="choice-letter">B</span>
+                                    <span>没有，因为旋转改变了所有向量的方向</span>
+                                </div>
+                                <div class="choice-item" data-choice="C" onclick="checkAnswer(this, 'B', 'e2')">
+                                    <span class="choice-letter">C</span>
+                                    <span>只有零向量是特征向量</span>
+                                </div>
+                            </div>
+                            <div class="exercise-feedback" id="feedback-e2"></div>
+                        </div>
+                        <div class="exercise-block" data-exercise="e3">
+                            <div class="exercise-header">
+                                <span class="exercise-badge hard">挑战</span>
+                                <span class="exercise-title">PCA与特征分解</span>
+                            </div>
+                            <p class="exercise-desc">PCA（主成分分析）利用特征分解来做什么？</p>
+                            <div class="exercise-choices">
+                                <div class="choice-item" data-choice="A" onclick="checkAnswer(this, 'A', 'e3')">
+                                    <span class="choice-letter">A</span>
+                                    <span>找到数据方差最大的方向（主成分），实现降维</span>
+                                </div>
+                                <div class="choice-item" data-choice="B" onclick="checkAnswer(this, 'A', 'e3')">
+                                    <span class="choice-letter">B</span>
+                                    <span>将数据分类到不同的簇中</span>
+                                </div>
+                                <div class="choice-item" data-choice="C" onclick="checkAnswer(this, 'A', 'e3')">
+                                    <span class="choice-letter">C</span>
+                                    <span>预测数据的未来趋势</span>
+                                </div>
+                            </div>
+                            <div class="exercise-feedback" id="feedback-e3"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="detail-visual">
+                    <div class="viz-panel glass-panel">
+                        <div class="viz-toolbar">
+                            <button class="viz-btn active" data-viz="eigen2d">2D特征向量</button>
+                            <button class="viz-btn" data-viz="eigenvis">可视化</button>
+                        </div>
+                        <canvas id="eigenViz"></canvas>
+                        <div class="viz-controls">
+                            <div class="matrix-inputs">
+                                <div class="matrix-editor">
+                                    <span class="matrix-bracket">[</span>
+                                    <div class="matrix-cells">
+                                        <input type="number" id="e00" value="2" step="0.1">
+                                        <input type="number" id="e01" value="1" step="0.1">
+                                        <input type="number" id="e10" value="1" step="0.1">
+                                        <input type="number" id="e11" value="2" step="0.1">
+                                    </div>
+                                    <span class="matrix-bracket">]</span>
+                                </div>
+                            </div>
+                            <div class="eigen-info" id="eigenInfo">
+                                <div class="eigen-item">
+                                    <span class="eigen-lambda">λ₁ = 3.00</span>
+                                    <span class="eigen-vec">v₁ = (0.71, 0.71)</span>
+                                </div>
+                                <div class="eigen-item">
+                                    <span class="eigen-lambda">λ₂ = 1.00</span>
+                                    <span class="eigen-vec">v₂ = (-0.71, 0.71)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Applications Section -->
+    <section class="section section-applications" id="applications">
+        <div class="section-header">
+            <span class="section-tag">Part 02</span>
+            <h2 class="section-title">工程落地应用</h2>
+            <p class="section-desc">线性代数如何驱动现代科技的每一个角落</p>
+        </div>
+
+        <div class="app-showcase">
+            <a href="apps/graphics.html" class="app-card glass-panel" data-app="graphics">
+                <div class="app-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                        <path d="M2 17l10 5 10-5"/>
+                        <path d="M2 12l10 5 10-5"/>
+                    </svg>
+                </div>
+                <h3>计算机图形学</h3>
+                <p>3D模型到2D屏幕的投影、光照计算、视角变换——一切基于矩阵运算。游戏引擎每秒执行数百万次矩阵乘法。</p>
+                <div class="app-demo">
+                    <canvas id="graphicsDemo"></canvas>
+                </div>
+                <span class="card-link">查看案例与论文 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+            </a>
+
+            <a href="apps/ml.html" class="app-card glass-panel" data-app="ml">
+                <div class="app-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                    </svg>
+                </div>
+                <h3>机器学习</h3>
+                <p>神经网络的前向传播和反向传播本质是矩阵运算。PCA降维利用特征分解提取数据的主要成分。</p>
+                <div class="app-demo">
+                    <canvas id="mlDemo"></canvas>
+                </div>
+                <span class="card-link">查看案例与论文 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+            </a>
+
+            <a href="apps/signal.html" class="app-card glass-panel" data-app="signal">
+                <div class="app-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M2 12h4l3-9 6 18 3-9h4"/>
+                    </svg>
+                </div>
+                <h3>信号处理</h3>
+                <p>傅里叶变换将信号从时域转换到频域，其离散形式完全依赖矩阵运算。JPEG压缩利用变换矩阵去除冗余信息。</p>
+                <div class="app-demo">
+                    <canvas id="signalDemo"></canvas>
+                </div>
+                <span class="card-link">查看案例与论文 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+            </a>
+
+            <a href="apps/data.html" class="app-card glass-panel" data-app="data">
+                <div class="app-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <ellipse cx="12" cy="5" rx="9" ry="3"/>
+                        <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+                        <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+                    </svg>
+                </div>
+                <h3>数据压缩</h3>
+                <p>SVD（奇异值分解）将矩阵分解为三个简单矩阵的乘积，保留主要信息同时大幅压缩数据存储。</p>
+                <div class="app-demo">
+                    <canvas id="dataDemo"></canvas>
+                </div>
+                <span class="card-link">查看案例与论文 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Playground Section -->
+    <section class="section section-playground" id="playground">
+        <div class="section-header">
+            <span class="section-tag">Playground</span>
+            <h2 class="section-title">交互实验室</h2>
+            <p class="section-desc">自由探索，亲手操作每一个概念</p>
+        </div>
+        <div class="playground-container glass-panel">
+            <div class="playground-sidebar">
+                <div class="tool-group">
+                    <h4>绘制工具</h4>
+                    <button class="tool-btn active" data-tool="vector">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="5" y1="19" x2="19" y2="5"/>
+                            <polyline points="19 5 12 5 19 12"/>
+                        </svg>
+                        向量
+                    </button>
+                    <button class="tool-btn" data-tool="grid">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <path d="M3 9h18M3 15h18M9 3v18M15 3v18"/>
+                        </svg>
+                        网格
+                    </button>
+                    <button class="tool-btn" data-tool="transform">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        </svg>
+                        变换
+                    </button>
+                </div>
+                <div class="tool-group">
+                    <h4>矩阵预设</h4>
+                    <button class="preset-btn" data-preset="identity">单位矩阵</button>
+                    <button class="preset-btn" data-preset="rotate90">旋转90°</button>
+                    <button class="preset-btn" data-preset="scale2">缩放2倍</button>
+                    <button class="preset-btn" data-preset="shear">剪切</button>
+                    <button class="preset-btn" data-preset="reflection">反射</button>
+                </div>
+                <div class="tool-group">
+                    <h4>当前矩阵</h4>
+                    <div class="matrix-display">
+                        <span class="matrix-bracket">[</span>
+                        <div class="matrix-cells readonly">
+                            <span id="pg00">1</span>
+                            <span id="pg01">0</span>
+                            <span id="pg10">0</span>
+                            <span id="pg11">1</span>
+                        </div>
+                        <span class="matrix-bracket">]</span>
+                    </div>
+                </div>
+            </div>
+            <div class="playground-canvas-wrapper">
+                <canvas id="playgroundCanvas"></canvas>
+                <div class="canvas-overlay">
+                    <span class="coord-display" id="coordDisplay">(0, 0)</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quiz Assessment Panel -->
+    <div class="quiz-panel" id="quizPanel">
+        <div class="quiz-header">
+            <h4>掌握度评估</h4>
+            <button class="quiz-toggle" id="quizToggle" onclick="toggleQuiz()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 15l-6-6-6 6"/></svg>
+            </button>
+        </div>
+        <div class="quiz-body">
+            <div class="quiz-progress">
+                <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="quizProgressFill"></div></div>
+                <span class="quiz-progress-text" id="quizProgressText">0/14</span>
+            </div>
+            <div class="quiz-stats">
+                <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg> <span id="quizCorrect">0</span> 正确</span>
+                <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6L6 18M6 6l12 12"/></svg> <span id="quizWrong">0</span> 错误</span>
+            </div>
+            <div class="quiz-mastery">
+                当前等级：<span class="quiz-mastery-level" id="quizMastery">未开始</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <span class="brand-text">LinearViz</span>
+                <p>以可视化之光，照亮抽象之美</p>
+            </div>
+            <div class="footer-links">
+                <a href="#principles">原理拆解</a>
+                <a href="#applications">工程应用</a>
+                <a href="#playground">交互实验室</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>LinearViz — 线性代数可视化教学平台</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/audio.js"></script>
+    <script src="js/engine.js"></script>
+    <script src="js/topics/vectors.js"></script>
+    <script src="js/topics/matrices.js"></script>
+    <script src="js/topics/transforms.js"></script>
+    <script src="js/topics/determinants.js"></script>
+    <script src="js/topics/eigen.js"></script>
+    <script src="js/topics/applications.js"></script>
+    <script src="js/components/playground.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        // Register Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('SW registered:', reg.scope))
+                    .catch(err => console.log('SW registration failed:', err));
+            });
+        }
+    </script>
+</body>
+</html>

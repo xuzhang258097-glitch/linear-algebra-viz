@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>信号处理 — LinearViz</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+    <nav class="main-nav scrolled" style="padding:1rem 2.5rem;">
+        <a href="../index.html#applications" class="back-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            返回工程应用
+        </a>
+    </nav>
+
+    <header class="app-detail-header">
+        <span class="section-tag">工程应用</span>
+        <h1>信号处理中的线性代数</h1>
+        <p>从音频滤波到JPEG压缩，矩阵变换是信号处理的核心工具</p>
+    </header>
+
+    <main class="app-detail-body">
+        <section class="case-section">
+            <h3>核心原理</h3>
+            <div class="case-card">
+                <h4>离散傅里叶变换（DFT）</h4>
+                <p>DFT 将时域信号转换为频域表示，其数学本质是一个<strong>矩阵-向量乘法</strong>：$\vec{X} = W \vec{x}$，其中 $W$ 是由复指数构成的变换矩阵。</p>
+                <p>快速傅里叶变换（FFT）之所以"快速"，是因为它利用了变换矩阵中大量重复元素的结构，将 $O(n^2)$ 的矩阵乘法优化为 $O(n \log n)$。</p>
+            </div>
+            <div class="case-card">
+                <h4>JPEG 压缩中的 DCT</h4>
+                <p>JPEG 使用离散余弦变换（DCT）而不是DFT，因为DCT只需要实数运算。8x8的DCT变换矩阵将图像块从空间域转换到频率域，高频分量（人眼不敏感的细节）可以被大量丢弃，从而实现压缩。</p>
+            </div>
+        </section>
+
+        <section class="case-section">
+            <h3>实体案例</h3>
+            <div class="case-card">
+                <h4>案例一：Shazam 音乐识别</h4>
+                <p>Shazam 通过计算音频片段的短时傅里叶变换（STFT），提取频谱图中的"指纹"特征点。这些特征形成一个稀疏矩阵，通过高效的哈希匹配在数据库中搜索相似指纹。</p>
+            </div>
+            <div class="case-card">
+                <h4>案例二：降噪耳机中的自适应滤波</h4>
+                <p>主动降噪耳机通过麦克风采集环境噪声，实时计算噪声的频谱特征，然后生成相位相反的抵消信号。这一过程的数学基础是维纳滤波和最优化理论，核心运算是矩阵求逆和特征分解。</p>
+            </div>
+            <div class="case-card">
+                <h4>案例三：CT 扫描中的图像重建</h4>
+                <p>CT扫描从不同角度拍摄X射线投影，需要通过<strong>逆Radon变换</strong>重建断层图像。这一过程被建模为一个大型线性方程组 $A\vec{x} = \vec{b}$ 的求解问题，其中 $A$ 是投影矩阵。</p>
+            </div>
+        </section>
+
+        <section class="case-section">
+            <h3>研究论文</h3>
+            <div class="paper-list">
+                <div class="paper-item">
+                    <span class="paper-year">1965</span>
+                    <div class="paper-info">
+                        <div class="paper-title">An Algorithm for the Machine Calculation of Complex Fourier Series (FFT)</div>
+                        <div class="paper-authors">Cooley & Tukey, IBM</div>
+                        <a href="https://doi.org/10.2307/2003354" target="_blank" class="paper-link">查看论文 ↗</a>
+                    </div>
+                </div>
+                <div class="paper-item">
+                    <span class="paper-year">1992</span>
+                    <div class="paper-info">
+                        <div class="paper-title">JPEG: Still Image Data Compression Standard</div>
+                        <div class="paper-authors">Pennebaker & Mitchell</div>
+                        <a href="https://ieeexplore.ieee.org/document/617242" target="_blank" class="paper-link">查看论文 ↗</a>
+                    </div>
+                </div>
+                <div class="paper-item">
+                    <span class="paper-year">2003</span>
+                    <div class="paper-info">
+                        <div class="paper-title">An Industrial Strength Audio Search Algorithm (Shazam)</div>
+                        <div class="paper-authors">Avery Wang, Shazam Entertainment</div>
+                        <a href="https://www.ee.columbia.edu/~dpwe/papers/Wang03-shazam.pdf" target="_blank" class="paper-link">查看论文 ↗</a>
+                    </div>
+                </div>
+                <div class="paper-item">
+                    <span class="paper-year">1971</span>
+                    <div class="paper-info">
+                        <div class="paper-title">Algebraic Reconstruction Techniques (ART) for CT Imaging</div>
+                        <div class="paper-authors">Gordon, Bender & Herman</div>
+                        <a href="https://doi.org/10.1016/0022-5193(71)90007-1" target="_blank" class="paper-link">查看论文 ↗</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="footer-bottom" style="border:none;padding-top:0;">
+            <p>LinearViz — 线性代数可视化教学平台</p>
+        </div>
+    </footer>
+
+    <script>document.addEventListener('DOMContentLoaded', () => { if(typeof renderMathInElement !== 'undefined') renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false}); });</script>
+</body>
+</html>

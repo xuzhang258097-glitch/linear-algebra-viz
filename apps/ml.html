@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>机器学习 — LinearViz</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+    <nav class="main-nav scrolled" style="padding:1rem 2.5rem;">
+        <a href="../index.html#applications" class="back-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            返回工程应用
+        </a>
+    </nav>
+
+    <header class="app-detail-header">
+        <span class="section-tag">工程应用</span>
+        <h1>机器学习中的线性代数</h1>
+        <p>神经网络的前向传播、反向传播、PCA降维——本质都是矩阵运算</p>
+    </header>
+
+    <main class="app-detail-body">
+        <section class="case-section">
+            <h3>核心原理</h3>
+            <div class="case-card">
+                <h4>神经网络的前向传播</h4>
+                <p>一个神经网络层可以简洁地表示为：$\vec{y} = W\vec{x} + \vec{b}$。其中 $W$ 是权重矩阵，$\vec{x}$ 是输入向量，$\vec{b}$ 是偏置向量。</p>
+                <p>一个100层的深度网络，本质上就是进行了100次矩阵乘法加上激活函数。GPU之所以对深度学习如此重要，正是因为它擅长并行执行大规模矩阵运算。</p>
+            </div>
+            <div class="case-card">
+                <h4>PCA 主成分分析</h4>
+                <p>面对高维数据（比如10000维的基因表达数据），PCA通过<strong>特征分解</strong>找到数据方差最大的几个方向（主成分），将数据投影到这些方向上，实现降维。</p>
+                <p>具体步骤：计算协方差矩阵 → 求特征值和特征向量 → 选取前k大特征值对应的特征向量 → 将原始数据投影到这些特征向量张成的空间中。</p>
+            </div>
+        </section>
+
+        <section class="case-section">
+            <h3>实体案例</h3>
+            <div class="case-card">
+                <h4>案例一：人脸识别中的特征脸（Eigenfaces）</h4>
+                <p>早期的人脸识别系统使用PCA对人脸图像进行降维。将每个人脸视为一个高维向量，计算所有脸的协方差矩阵，提取特征向量（称为"特征脸"）。任何人脸都可以表示为这些特征脸的线性组合，只需存储少量系数即可。</p>
+            </div>
+            <div class="case-card">
+                <h4>案例二：推荐系统中的矩阵分解</h4>
+                <p>Netflix、Spotify 等平台的推荐系统使用矩阵分解技术：将用户-物品评分矩阵分解为两个低秩矩阵的乘积，从而预测用户对未评分物品的喜好程度。</p>
+            </div>
+            <div class="case-card">
+                <h4>案例三：Google 的 PageRank 算法</h4>
+                <p>PageRank 本质上是一个特征向量问题。将互联网视为一个巨大的有向图，构建链接矩阵，计算其主特征向量，特征值大小即为网页的重要性排序。</p>
+            </div>
+        </section>
+
+        <section class="case-section">
+            <h3>研究论文</h3>
+            <div class="paper-list">
+                <div class="paper-item">
+                    <span class="paper-year">1987</span>
+                    <div class="paper-info">
+                        <div class="paper-title">Eigenfaces for Recognition</div>
+                        <div class="paper-authors">Turk & Pentland, MIT</div>
+                        <a href="https://ieeexplore.ieee.org/document/139758" target="_blank" class="paper-link">查看论文 ↗</a>
+                    </div>
+                </div>
+                <div class="paper-item">
+                    <span class="paper-year">1998</span>
+                    <div class="paper-info">
+                        <div class="paper-title">The PageRank Citation Ranking</div>
+                        <div class="paper-authors">Page, Brin, Motwani & Winograd, Stanford</div>
+                        <a href="http://ilpubs.stanford.edu:8090/422/" target="_blank" class="paper-link">查看论文 ↗</a>
+                    </div>
+                </div>
+                <div class="paper-item">
+                    <span class="paper-year">2009</span>
+                    <div class="paper-info">
+                        <div class="paper-title">Matrix Factorization Techniques for Recommender Systems</div>
+                        <div class="paper-authors">Koren, Bell & Volinsky, AT&T Labs</div>
+                        <a href="https://ieeexplore.ieee.org/document/5197422" target="_blank" class="paper-link">查看论文 ↗</a>
+                    </div>
+                </div>
+                <div class="paper-item">
+                    <span class="paper-year">2017</span>
+                    <div class="paper-info">
+                        <div class="paper-title">Attention Is All You Need (Transformer)</div>
+                        <div class="paper-authors">Vaswani et al., Google Brain</div>
+                        <a href="https://arxiv.org/abs/1706.03762" target="_blank" class="paper-link">查看论文 ↗</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="footer-bottom" style="border:none;padding-top:0;">
+            <p>LinearViz — 线性代数可视化教学平台</p>
+        </div>
+    </footer>
+
+    <script>document.addEventListener('DOMContentLoaded', () => { if(typeof renderMathInElement !== 'undefined') renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false}); });</script>
+</body>
+</html>
