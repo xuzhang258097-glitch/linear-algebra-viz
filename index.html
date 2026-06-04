@@ -244,15 +244,15 @@
                     <div class="concept-block">
                         <span class="block-tag concept">概念</span>
                         <h3>什么是向量？</h3>
-                        <p>想象你在地图上走路：从家出发，向东走3公里，再向北走4公里。这个"走了多远、朝哪个方向"的信息，就是<strong>向量</strong>。</p>
-                        <p>向量由两部分组成：<strong>大小</strong>（走了多远）和<strong>方向</strong>（朝哪走）。在数学上，我们用一组数字来表示它，比如 [3, 4] 就代表了"向东3、向北4"。</p>
+                        <p>想象你站在十字路口，想去一家餐厅。你说："向东走300米，再向北走400米。"这个指令就包含了两个关键信息：<strong>走多远</strong>（距离）和<strong>朝哪走</strong>（方向）。这就是<strong>向量</strong>——一个既有大小又有方向的量。</p>
+                        <p>生活中向量无处不在：推箱子时的<strong>力</strong>（用多大力、往哪推）、飞机飞行时的<strong>速度</strong>（飞多快、朝哪飞）、游戏中的<strong>位移</strong>（角色移动的方向和距离）。在数学中，我们用一组数字简洁地表示它，比如 $[3, 4]$ 就代表"向东3个单位、向北4个单位"。</p>
                         <div class="formula">$$ \vec{v} = \begin{bmatrix} 3 \\ 4 \end{bmatrix} $$</div>
                         <div class="exercise-block" data-exercise="v1">
                             <div class="exercise-header">
                                 <span class="exercise-badge easy">入门</span>
                                 <span class="exercise-title">向量的直观理解</span>
                             </div>
-                            <p class="exercise-desc">小明从原点出发，先向东走2步，再向北走2步。他的位移向量是什么？</p>
+                            <p class="exercise-desc">小明从家出发去公园，先向东走2个街区，再向北走2个街区。如果向东为x轴正方向，向北为y轴正方向，他的位移向量是什么？</p>
                             <div class="exercise-choices">
                                 <div class="choice-item" data-choice="A" onclick="checkAnswer(this, 'A', 'v1')">
                                     <span class="choice-letter">A</span>
@@ -268,12 +268,14 @@
                                 </div>
                             </div>
                             <div class="exercise-feedback" id="feedback-v1"></div>
+                            <div class="exercise-explanation" id="explain-v1" style="display:none;">位移向量只需要记录最终相对起点的位置变化。向东2、向北2，对应向量就是 [2, 2]。</div>
                         </div>
                     </div>
                     <div class="concept-block">
+                        <span class="block-tag concept">概念</span>
                         <h3>向量加法 — 两段路连起来走</h3>
-                        <p>如果你先沿着向量 $\vec{a}$ 走，再沿着向量 $\vec{b}$ 走，最终的效果等价于沿着一个新的向量 $\vec{a} + \vec{b}$ 走。这就像"先走一段、再走一段"等于"直接走总路程"。</p>
-                        <p>计算方法很简单：对应分量相加。几何上，把两个向量首尾相接，从起点到终点的对角线就是和向量（平行四边形法则）。</p>
+                        <p>想象接力赛跑：第一棒选手跑了一段路（向量 $\vec{a}$），第二棒从交接点继续跑（向量 $\vec{b}$）。最终效果，就像一个人直接从起点跑到了终点（向量 $\vec{a} + \vec{b}$）。</p>
+                        <p>再比如两个人一起推箱子：你往东推，朋友往北推，箱子实际运动的方向就是两个力的"合力"方向。计算方法很简单：对应分量相加。几何上把两个向量首尾相接，从起点到终点的对角线就是和向量（平行四边形法则）。</p>
                         <div class="formula">$$ \vec{a} + \vec{b} = \begin{bmatrix} a_1 + b_1 \\ a_2 + b_2 \end{bmatrix} $$</div>
                         <div class="exercise-block" data-exercise="v2">
                             <div class="exercise-header">
@@ -296,62 +298,121 @@
                                 </div>
                             </div>
                             <div class="exercise-feedback" id="feedback-v2"></div>
+                            <div class="exercise-explanation" id="explain-v2" style="display:none;">向量加法是对应分量相加：[1+4, 3+2] = [5, 5]。</div>
                         </div>
                     </div>
                     <div class="concept-block">
-                        <h3>数乘 — 把向量拉长或缩短</h3>
-                        <p>用一个数字乘以向量，就是把这个向量的长度按比例缩放。数字大于1时拉长，0到1之间时缩短，负数时反向。</p>
-                        <p>比如 $2\vec{v}$ 就是沿着 $\vec{v}$ 的方向走两倍的距离。$-\vec{v}$ 就是沿着相反的方向走同样的距离。</p>
+                        <span class="block-tag concept">概念</span>
+                        <h3>数乘 — 放大镜与倒车</h3>
+                        <p>用一个数字乘以向量，就像用放大镜看东西：数字大于1时"放大"（向量拉长），0到1之间时"缩小"（向量缩短），负数时就像"倒车"——方向完全相反，但长度按比例缩放。</p>
+                        <p>比如 $2\vec{v}$ 就是沿着原方向走两倍的距离；$0.5\vec{v}$ 是只走一半；$-\vec{v}$ 则是掉头往回走同样的距离。数乘不改变向量的方向（除非乘以负数，这时方向反转180度）。</p>
                         <div class="formula">$$ k\vec{v} = \begin{bmatrix} kv_1 \\ kv_2 \end{bmatrix} $$</div>
+                        <div class="exercise-block" data-exercise="v3">
+                            <div class="exercise-header">
+                                <span class="exercise-badge easy">入门</span>
+                                <span class="exercise-title">数乘的概念</span>
+                            </div>
+                            <p class="exercise-desc">设 $\vec{v} = [2, 1]$，计算 $-3\vec{v}$ 的结果。</p>
+                            <div class="exercise-choices">
+                                <div class="choice-item" data-choice="A" onclick="checkAnswer(this, 'A', 'v3')">
+                                    <span class="choice-letter">A</span>
+                                    <span>[-6, -3]</span>
+                                </div>
+                                <div class="choice-item" data-choice="B" onclick="checkAnswer(this, 'A', 'v3')">
+                                    <span class="choice-letter">B</span>
+                                    <span>[6, 3]</span>
+                                </div>
+                                <div class="choice-item" data-choice="C" onclick="checkAnswer(this, 'A', 'v3')">
+                                    <span class="choice-letter">C</span>
+                                    <span>[-2, -1]</span>
+                                </div>
+                            </div>
+                            <div class="exercise-feedback" id="feedback-v3"></div>
+                            <div class="exercise-explanation" id="explain-v3" style="display:none;">数乘将每个分量乘以标量：-3 × [2, 1] = [-6, -3]。负号使方向反转，3使长度变为3倍。</div>
+                        </div>
                     </div>
                     <div class="concept-block">
+                        <span class="block-tag concept">概念</span>
+                        <h3>向量减法 — 从终点走回起点</h3>
+                        <p>向量减法可以理解为"差向量"：$\vec{a} - \vec{b}$ 表示从 $\vec{b}$ 的终点指向 $\vec{a}$ 终点的向量。生活中就像问"从书店到超市怎么走"——你需要知道两个地点相对原点的位置，然后相减得到路径。</p>
+                        <p>计算方法：对应分量相减。几何上，$\vec{a} - \vec{b}$ 就是把 $\vec{a}$ 和 $-\vec{b}$ 做加法（先把 $\vec{b}$ 掉头，再连起来走）。</p>
+                        <div class="formula">$$ \vec{a} - \vec{b} = \begin{bmatrix} a_1 - b_1 \\ a_2 - b_2 \end{bmatrix} $$</div>
+                        <div class="exercise-block" data-exercise="v4">
+                            <div class="exercise-header">
+                                <span class="exercise-badge medium">进阶</span>
+                                <span class="exercise-title">向量减法</span>
+                            </div>
+                            <p class="exercise-desc">已知 $\vec{a} = [5, 3]$，$\vec{b} = [2, 1]$，求 $\vec{a} - \vec{b}$。</p>
+                            <div class="exercise-choices">
+                                <div class="choice-item" data-choice="A" onclick="checkAnswer(this, 'A', 'v4')">
+                                    <span class="choice-letter">A</span>
+                                    <span>[3, 2]</span>
+                                </div>
+                                <div class="choice-item" data-choice="B" onclick="checkAnswer(this, 'A', 'v4')">
+                                    <span class="choice-letter">B</span>
+                                    <span>[7, 4]</span>
+                                </div>
+                                <div class="choice-item" data-choice="C" onclick="checkAnswer(this, 'A', 'v4')">
+                                    <span class="choice-letter">C</span>
+                                    <span>[3, 4]</span>
+                                </div>
+                            </div>
+                            <div class="exercise-feedback" id="feedback-v4"></div>
+                            <div class="exercise-explanation" id="explain-v4" style="display:none;">向量减法是对应分量相减：[5-2, 3-1] = [3, 2]。</div>
+                        </div>
+                    </div>
+                    <div class="concept-block">
+                        <span class="block-tag concept">概念</span>
                         <h3>点积（内积）— 两个向量有多"像"</h3>
-                        <p>点积回答了一个问题：两个向量指向的方向有多接近？</p>
-                        <p>你可以这样理解：把向量 $\vec{a}$ 投影到 $\vec{b}$ 的方向上，看投影有多长，再乘以 $\vec{b}$ 自己的长度。如果两个向量完全同向，点积最大；完全垂直，点积为零；完全反向，点积为负。</p>
+                        <p>点积回答了一个非常实用的问题：两个向量指向的方向有多接近？你可以把它想象成"相似度评分"。</p>
+                        <p>生活中，当你迎着风跑步时，如果风向和你跑的方向完全一致，风对你的阻碍最大（点积最大）；如果风从侧面吹来（垂直），对你的前进几乎没有影响（点积为零）；如果风从背后推你，不仅不阻碍，还帮你加速（点积为负，因为角度超过90度）。</p>
+                        <p>计算方法：对应分量相乘再相加。几何上等于 $|\vec{a}||\vec{b}|\cos\theta$。完全同向时点积最大；垂直时点积为零；反向时点积为负。</p>
                         <div class="formula">$$ \vec{a} \cdot \vec{b} = a_1b_1 + a_2b_2 = |\vec{a}||\vec{b}|\cos\theta $$</div>
-                        <div class="exercise-block" data-exercise="v3">
+                        <div class="exercise-block" data-exercise="v5">
                             <div class="exercise-header">
                                 <span class="exercise-badge medium">进阶</span>
                                 <span class="exercise-title">点积的几何意义</span>
                             </div>
                             <p class="exercise-desc">向量 $\vec{a} = [1, 0]$ 与 $\vec{b} = [0, 1]$ 的点积是多少？这说明了什么？</p>
                             <div class="exercise-choices">
-                                <div class="choice-item" data-choice="A" onclick="checkAnswer(this, 'A', 'v3')">
+                                <div class="choice-item" data-choice="A" onclick="checkAnswer(this, 'A', 'v5')">
                                     <span class="choice-letter">A</span>
                                     <span>0，说明两向量垂直</span>
                                 </div>
-                                <div class="choice-item" data-choice="B" onclick="checkAnswer(this, 'A', 'v3')">
+                                <div class="choice-item" data-choice="B" onclick="checkAnswer(this, 'A', 'v5')">
                                     <span class="choice-letter">B</span>
                                     <span>1，说明两向量同向</span>
                                 </div>
-                                <div class="choice-item" data-choice="C" onclick="checkAnswer(this, 'A', 'v3')">
+                                <div class="choice-item" data-choice="C" onclick="checkAnswer(this, 'A', 'v5')">
                                     <span class="choice-letter">C</span>
                                     <span>-1，说明两向量反向</span>
                                 </div>
                             </div>
-                            <div class="exercise-feedback" id="feedback-v3"></div>
+                            <div class="exercise-feedback" id="feedback-v5"></div>
+                            <div class="exercise-explanation" id="explain-v5" style="display:none;">点积 = 1×0 + 0×1 = 0。两个向量一个沿x轴，一个沿y轴，互相垂直，所以点积为0。这是判断垂直的重要方法。</div>
                         </div>
-                        <div class="exercise-block" data-exercise="v4">
+                        <div class="exercise-block" data-exercise="v6">
                             <div class="exercise-header">
                                 <span class="exercise-badge hard">挑战</span>
                                 <span class="exercise-title">向量的实际应用</span>
                             </div>
-                            <p class="exercise-desc">在导航中，一艘船先以向量 $[3, 4]$ 航行，遇到水流影响，水流向量为 $[1, -2]$。船的实际位移向量是什么？</p>
+                            <p class="exercise-desc">一架无人机先以向量 $[3, 4]$ 飞行（单位：百米），遇到侧风，风的影响向量为 $[1, -2]$。无人机的实际位移向量是什么？</p>
                             <div class="exercise-choices">
-                                <div class="choice-item" data-choice="A" onclick="checkAnswer(this, 'A', 'v4')">
+                                <div class="choice-item" data-choice="A" onclick="checkAnswer(this, 'A', 'v6')">
                                     <span class="choice-letter">A</span>
                                     <span>[4, 2]</span>
                                 </div>
-                                <div class="choice-item" data-choice="B" onclick="checkAnswer(this, 'A', 'v4')">
+                                <div class="choice-item" data-choice="B" onclick="checkAnswer(this, 'A', 'v6')">
                                     <span class="choice-letter">B</span>
                                     <span>[3, -2]</span>
                                 </div>
-                                <div class="choice-item" data-choice="C" onclick="checkAnswer(this, 'A', 'v4')">
+                                <div class="choice-item" data-choice="C" onclick="checkAnswer(this, 'A', 'v6')">
                                     <span class="choice-letter">C</span>
                                     <span>[2, 6]</span>
                                 </div>
                             </div>
-                            <div class="exercise-feedback" id="feedback-v4"></div>
+                            <div class="exercise-feedback" id="feedback-v6"></div>
+                            <div class="exercise-explanation" id="explain-v6" style="display:none;">实际位移是自身飞行与风影响的叠加：[3, 4] + [1, -2] = [4, 2]。这类似于物理中的速度合成。</div>
                         </div>
                     </div>
                 </div>
@@ -405,8 +466,8 @@
                     <div class="concept-block">
                         <span class="block-tag concept">概念</span>
                         <h3>矩阵是什么？一张"变形配方表"</h3>
-                        <p>想象你有一张<strong>变形配方表</strong>，上面记录了"如何把平面上的每一个点变换到新位置"。矩阵就是这样的配方表。</p>
-                        <p>一个 2x2 矩阵有两列，第一列告诉你"原来指向右边的单位向量被变到了哪里"，第二列告诉你"原来指向上边的单位向量被变到了哪里"。知道了这两个，你就知道了整个平面的变形方式。</p>
+                        <p>想象你是一名魔术师，手里有一张<strong>变形配方表</strong>，上面详细记录了"如何把舞台上的每一个点变到新位置"。矩阵就是这样的配方表——它不是一个数，而是一个由数字排列成的"网格"，每个位置都有特定的含义。</p>
+                        <p>一个 2x2 矩阵有两列，这两列至关重要：第一列告诉你"原来指向右边的单位向量被变到了哪里"，第二列告诉你"原来指向上边的单位向量被变到了哪里"。只要知道了这两个"标杆"的去向，你就知道了整个平面上的每一个点会被如何变形。就像知道了两条铁轨的方向，你就能推断出整列火车的走向。</p>
                         <div class="formula">$$ A = \begin{bmatrix} a_{11} & a_{12} \\ a_{21} & a_{22} \end{bmatrix} $$</div>
                         <div class="exercise-block" data-exercise="m1">
                             <div class="exercise-header">
@@ -429,61 +490,127 @@
                                 </div>
                             </div>
                             <div class="exercise-feedback" id="feedback-m1"></div>
+                            <div class="exercise-explanation" id="explain-m1" style="display:none;">矩阵的第一列表示原来x轴方向的单位向量 [1, 0] 被变换后的位置，所以 [2, 0] 表示 (1,0) 被变到了 (2,0)。</div>
                         </div>
                     </div>
                     <div class="concept-block">
-                        <h3>矩阵乘法 — "先变形A，再变形B"</h3>
-                        <p>矩阵乘法的意思是：先做一个变换，再做另一个变换。注意顺序很重要！$AB$ 表示"先做B，再做A"。</p>
-                        <p>就像化妆：先涂粉底再画眼影，和先画眼影再涂粉底，结果完全不同。矩阵乘法也是一样的道理——顺序不可交换。</p>
-                        <div class="formula">$$ AB = \begin{bmatrix} a_{11}b_{11}+a_{12}b_{21} & a_{11}b_{12}+a_{12}b_{22} \\ a_{21}b_{11}+a_{22}b_{21} & a_{21}b_{12}+a_{22}b_{22} \end{bmatrix} $$</div>
-                    </div>
-                    <div class="concept-block">
-                        <h3>单位矩阵 — "什么都不做"</h3>
-                        <p>单位矩阵 $I$ 就像乘法中的1：任何矩阵乘以它，都保持不变。它表示"不做任何变换"。</p>
-                        <div class="formula">$$ I = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} $$</div>
+                        <span class="block-tag concept">概念</span>
+                        <h3>矩阵乘向量 — 把配方应用到具体对象</h3>
+                        <p>矩阵是一个"变形配方"，向量是"要变形的对象"。矩阵乘以向量，就是把配方应用到具体对象上，得到变形后的新位置。</p>
+                        <p>想象快递分拣系统：每个包裹（向量）经过扫描后，根据规则（矩阵）被分配到新的货架位置。不同的规则会把同一个包裹分到不同的地方。矩阵乘向量的本质，就是根据矩阵的"规则"重新定位向量。</p>
+                        <div class="formula">$$ A\vec{v} = \begin{bmatrix} a_{11}v_1 + a_{12}v_2 \\ a_{21}v_1 + a_{22}v_2 \end{bmatrix} $$</div>
                         <div class="exercise-block" data-exercise="m2">
                             <div class="exercise-header">
                                 <span class="exercise-badge easy">入门</span>
-                                <span class="exercise-title">矩阵乘法基础</span>
+                                <span class="exercise-title">矩阵乘向量</span>
                             </div>
-                            <p class="exercise-desc">计算：$\begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix} \times \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}$</p>
+                            <p class="exercise-desc">计算 $\begin{bmatrix} 2 & 0 \\ 0 & 3 \end{bmatrix} \times \begin{bmatrix} 1 \\ 1 \end{bmatrix}$。</p>
                             <div class="exercise-choices">
                                 <div class="choice-item" data-choice="A" onclick="checkAnswer(this, 'A', 'm2')">
                                     <span class="choice-letter">A</span>
-                                    <span>$\begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix}$</span>
+                                    <span>$\begin{bmatrix} 2 \\ 3 \end{bmatrix}$</span>
                                 </div>
                                 <div class="choice-item" data-choice="B" onclick="checkAnswer(this, 'A', 'm2')">
                                     <span class="choice-letter">B</span>
-                                    <span>$\begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}$</span>
+                                    <span>$\begin{bmatrix} 3 \\ 2 \end{bmatrix}$</span>
                                 </div>
                                 <div class="choice-item" data-choice="C" onclick="checkAnswer(this, 'A', 'm2')">
                                     <span class="choice-letter">C</span>
-                                    <span>$\begin{bmatrix} 2 & 2 \\ 3 & 5 \end{bmatrix}$</span>
+                                    <span>$\begin{bmatrix} 2 \\ 2 \end{bmatrix}$</span>
                                 </div>
                             </div>
                             <div class="exercise-feedback" id="feedback-m2"></div>
+                            <div class="exercise-explanation" id="explain-m2" style="display:none;">矩阵乘向量：第一行 2×1 + 0×1 = 2；第二行 0×1 + 3×1 = 3。结果是 [2, 3]。这相当于x方向放大2倍，y方向放大3倍。</div>
                         </div>
+                    </div>
+                    <div class="concept-block">
+                        <span class="block-tag concept">概念</span>
+                        <h3>矩阵乘法 — "先化妆B，再定妆A"</h3>
+                        <p>两个矩阵相乘，表示"先做一个变换，再做另一个变换"。注意顺序至关重要！$AB$ 表示"先应用B变换，再应用A变换"（从右往左读）。</p>
+                        <p>就像化妆：先涂粉底（B）再画眼影（A），和先画眼影再涂粉底，效果天差地别。矩阵乘法也是一样的道理——顺序不可交换。如果 $AB = BA$，那这两个变换就是"可交换"的，但大部分情况下它们并不相等。</p>
+                        <div class="formula">$$ AB = \begin{bmatrix} a_{11}b_{11}+a_{12}b_{21} & a_{11}b_{12}+a_{12}b_{22} \\ a_{21}b_{11}+a_{22}b_{21} & a_{21}b_{12}+a_{22}b_{22} \end{bmatrix} $$</div>
+                    </div>
+                    <div class="concept-block">
+                        <span class="block-tag concept">概念</span>
+                        <h3>单位矩阵 — "什么都不做的透明滤镜"</h3>
+                        <p>单位矩阵 $I = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}$ 就像乘法中的数字1，或者照片编辑里的"原图"滤镜——任何矩阵乘以它，都保持不变。它表示"不做任何变换，让一切保持原样"。</p>
+                        <p>单位矩阵的两列恰好就是原来的两个坐标轴方向：(1,0) 和 (0,1)。这说明"标杆没有被移动"，所以整个空间也没有变形。</p>
+                        <div class="formula">$$ I = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} $$</div>
                         <div class="exercise-block" data-exercise="m3">
+                            <div class="exercise-header">
+                                <span class="exercise-badge easy">入门</span>
+                                <span class="exercise-title">单位矩阵的特性</span>
+                            </div>
+                            <p class="exercise-desc">计算：$\begin{bmatrix} 5 & 7 \\ 2 & 9 \end{bmatrix} \times \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}$</p>
+                            <div class="exercise-choices">
+                                <div class="choice-item" data-choice="A" onclick="checkAnswer(this, 'A', 'm3')">
+                                    <span class="choice-letter">A</span>
+                                    <span>$\begin{bmatrix} 5 & 7 \\ 2 & 9 \end{bmatrix}$</span>
+                                </div>
+                                <div class="choice-item" data-choice="B" onclick="checkAnswer(this, 'A', 'm3')">
+                                    <span class="choice-letter">B</span>
+                                    <span>$\begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}$</span>
+                                </div>
+                                <div class="choice-item" data-choice="C" onclick="checkAnswer(this, 'A', 'm3')">
+                                    <span class="choice-letter">C</span>
+                                    <span>$\begin{bmatrix} 6 & 7 \\ 2 & 10 \end{bmatrix}$</span>
+                                </div>
+                            </div>
+                            <div class="exercise-feedback" id="feedback-m3"></div>
+                            <div class="exercise-explanation" id="explain-m3" style="display:none;">单位矩阵就像数字1，任何矩阵乘以它都保持不变。结果是原矩阵本身。</div>
+                        </div>
+                        <div class="exercise-block" data-exercise="m4">
                             <div class="exercise-header">
                                 <span class="exercise-badge medium">进阶</span>
                                 <span class="exercise-title">矩阵乘法的顺序</span>
                             </div>
                             <p class="exercise-desc">设 $A = \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix}$，$B = \begin{bmatrix} 1 & 0 \\ 1 & 1 \end{bmatrix}$。$AB$ 是否等于 $BA$？</p>
                             <div class="exercise-choices">
-                                <div class="choice-item" data-choice="A" onclick="checkAnswer(this, 'B', 'm3')">
+                                <div class="choice-item" data-choice="A" onclick="checkAnswer(this, 'B', 'm4')">
                                     <span class="choice-letter">A</span>
                                     <span>是，总是相等</span>
                                 </div>
-                                <div class="choice-item" data-choice="B" onclick="checkAnswer(this, 'B', 'm3')">
+                                <div class="choice-item" data-choice="B" onclick="checkAnswer(this, 'B', 'm4')">
                                     <span class="choice-letter">B</span>
                                     <span>否，矩阵乘法一般不满足交换律</span>
                                 </div>
-                                <div class="choice-item" data-choice="C" onclick="checkAnswer(this, 'B', 'm3')">
+                                <div class="choice-item" data-choice="C" onclick="checkAnswer(this, 'B', 'm4')">
                                     <span class="choice-letter">C</span>
                                     <span>只有当都是单位矩阵时才不相等</span>
                                 </div>
                             </div>
-                            <div class="exercise-feedback" id="feedback-m3"></div>
+                            <div class="exercise-feedback" id="feedback-m4"></div>
+                            <div class="exercise-explanation" id="explain-m4" style="display:none;">矩阵乘法一般不满足交换律。AB表示"先B后A"，BA表示"先A后B"，顺序不同结果通常不同。</div>
+                        </div>
+                    </div>
+                    <div class="concept-block">
+                        <span class="block-tag concept">概念</span>
+                        <h3>逆矩阵 — "撤销上一步操作"</h3>
+                        <p>逆矩阵就是"撤销操作"。如果矩阵 $A$ 把空间变形成某种样子，那么 $A$ 的逆矩阵 $A^{-1}$ 就把它恢复成原来的样子。就像 Photoshop 里的"撤销"按钮：$A^{-1}A = I$（撤销后回到原图）。</p>
+                        <p>不是每个矩阵都有逆矩阵。如果行列式为0（空间被压扁了），信息已经丢失，就无法恢复了——就像把照片彻底模糊后再也无法还原清晰度一样。</p>
+                        <div class="formula">$$ A^{-1}A = AA^{-1} = I $$</div>
+                        <div class="exercise-block" data-exercise="m5">
+                            <div class="exercise-header">
+                                <span class="exercise-badge hard">挑战</span>
+                                <span class="exercise-title">逆矩阵的理解</span>
+                            </div>
+                            <p class="exercise-desc">若矩阵 $A$ 将平面上的所有点沿x轴方向放大2倍，则 $A^{-1}$ 会做什么？</p>
+                            <div class="exercise-choices">
+                                <div class="choice-item" data-choice="A" onclick="checkAnswer(this, 'A', 'm5')">
+                                    <span class="choice-letter">A</span>
+                                    <span>沿x轴方向缩小为原来的一半</span>
+                                </div>
+                                <div class="choice-item" data-choice="B" onclick="checkAnswer(this, 'A', 'm5')">
+                                    <span class="choice-letter">B</span>
+                                    <span>沿x轴方向继续放大2倍</span>
+                                </div>
+                                <div class="choice-item" data-choice="C" onclick="checkAnswer(this, 'A', 'm5')">
+                                    <span class="choice-letter">C</span>
+                                    <span>不做任何变换</span>
+                                </div>
+                            </div>
+                            <div class="exercise-feedback" id="feedback-m5"></div>
+                            <div class="exercise-explanation" id="explain-m5" style="display:none;">逆矩阵的作用是"撤销"原矩阵的变换。放大2倍的逆操作就是缩小为1/2（即0.5倍）。</div>
                         </div>
                     </div>
                 </div>
@@ -547,9 +674,10 @@
                     </div>
                     <div class="concept-block">
                         <span class="block-tag concept">概念</span>
-                        <h3>线性变换 — "把空间整体变形"</h3>
-                        <p>想象你有一张<strong>橡皮筋网格</strong>，上面画满了直线和正方形。线性变换就是对这个网格做"均匀拉伸、旋转或剪切"，但保持几个关键性质：</p>
-                        <p>（1）原点不动；（2）直线还是直线；（3）平行线仍然平行。就像推一堵由橡皮筋组成的墙，它会被拉伸变形，但不会突然断裂或扭曲成曲线。</p>
+                        <h3>线性变换 — "橡皮筋网格的优雅变形"</h3>
+                        <p>想象你有一张由橡皮筋编织成的网格，上面画满了直线和正方形。线性变换就是对这张网格做一次<strong>优雅而均匀的变形</strong>：它可以被拉伸、旋转、剪切，但必须遵守三个"铁律"：</p>
+                        <p>（1）<strong>原点不动</strong>——网格的中心始终固定；（2）<strong>直线还是直线</strong>——橡皮筋不会弯成曲线；（3）<strong>平行线仍然平行</strong>——原本平行的橡皮筋，变形后依然平行。就像推一堵由橡皮筋组成的墙，它会被拉伸变形，但绝不会突然断裂或扭曲。</p>
+                        <p>正因有这些约束，线性变换才能被矩阵<strong>完全描述</strong>。只要知道两个基向量变到了哪里，整个网格的命运就确定了。</p>
                         <div class="exercise-block" data-exercise="t0">
                             <div class="exercise-header">
                                 <span class="exercise-badge easy">入门</span>
@@ -571,12 +699,14 @@
                                 </div>
                             </div>
                             <div class="exercise-feedback" id="feedback-t0"></div>
+                            <div class="exercise-explanation" id="explain-t0" style="display:none;">平移会移动原点，不满足"原点不动"的线性变换铁律，因此不是线性变换。旋转和缩放都是线性变换。</div>
                         </div>
                     </div>
                     <div class="concept-block">
+                        <span class="block-tag concept">概念</span>
                         <h3>旋转变换 — "原地转圈"</h3>
-                        <p>把平面上的所有点绕原点旋转角度 $\theta$。就像你把一张画着网格的纸钉在原点，然后旋转它。</p>
-                        <p>旋转矩阵由正弦和余弦组成。$\cos\theta$ 控制旋转后的投影长度，$\sin\theta$ 控制侧向偏移。有趣的是，旋转不会改变任何面积！</p>
+                        <p>把平面上的所有点绕原点旋转角度 $\theta$。就像你把一张画着网格的纸用图钉钉在原点，然后轻轻转动它。有趣的是，旋转<strong>不会改变任何面积</strong>——就像把披萨转个方向，它的大小一点没变。</p>
+                        <p>旋转矩阵由正弦和余弦组成：$\cos\theta$ 控制旋转后x轴的投影，$\sin\theta$ 控制y轴的偏移。你可以验证：旋转矩阵的行列式恒等于1，这正说明了"面积不变"。</p>
                         <div class="formula">$$ R(\theta) = \begin{bmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{bmatrix} $$</div>
                         <div class="exercise-block" data-exercise="t1">
                             <div class="exercise-header">
@@ -599,39 +729,73 @@
                                 </div>
                             </div>
                             <div class="exercise-feedback" id="feedback-t1"></div>
+                            <div class="exercise-explanation" id="explain-t1" style="display:none;">代入公式：cos90°=0, sin90°=1，得到 [[0, -1], [1, 0]]。这个矩阵会把 (1,0) 变到 (0,1)，(0,1) 变到 (-1,0)，即逆时针旋转90度。</div>
                         </div>
                     </div>
                     <div class="concept-block">
-                        <h3>缩放变换 — "拉伸与压缩"</h3>
-                        <p>沿坐标轴方向拉伸或压缩空间。X轴方向缩放 $s_x$ 倍，Y轴方向缩放 $s_y$ 倍。如果 $s_x = s_y$，就是均匀的放大或缩小；如果不相等，图形会被"压扁"成椭圆。</p>
+                        <span class="block-tag concept">概念</span>
+                        <h3>缩放变换 — 放大镜与哈哈镜</h3>
+                        <p>沿坐标轴方向拉伸或压缩空间。X轴方向缩放 $s_x$ 倍，Y轴方向缩放 $s_y$ 倍。如果 $s_x = s_y$，就像用放大镜看东西——图形均匀放大或缩小；如果不相等，图形会被"压扁"成椭圆，就像游乐园里的哈哈镜。</p>
+                        <p>缩放变换是理解行列式的绝佳入口：缩放矩阵的行列式就是 $s_x \times s_y$，恰好等于面积的缩放倍数！</p>
                         <div class="formula">$$ S(s_x, s_y) = \begin{bmatrix} s_x & 0 \\ 0 & s_y \end{bmatrix} $$</div>
+                        <div class="exercise-block" data-exercise="t2">
+                            <div class="exercise-header">
+                                <span class="exercise-badge medium">进阶</span>
+                                <span class="exercise-title">缩放与面积</span>
+                            </div>
+                            <p class="exercise-desc">缩放矩阵 $\begin{bmatrix} 2 & 0 \\ 0 & 3 \end{bmatrix}$ 将单位正方形（面积为1）变成了什么图形？面积是多少？</p>
+                            <div class="exercise-choices">
+                                <div class="choice-item" data-choice="A" onclick="checkAnswer(this, 'A', 't2')">
+                                    <span class="choice-letter">A</span>
+                                    <span>长方形，面积为6</span>
+                                </div>
+                                <div class="choice-item" data-choice="B" onclick="checkAnswer(this, 'A', 't2')">
+                                    <span class="choice-letter">B</span>
+                                    <span>正方形，面积为6</span>
+                                </div>
+                                <div class="choice-item" data-choice="C" onclick="checkAnswer(this, 'A', 't2')">
+                                    <span class="choice-letter">C</span>
+                                    <span>长方形，面积为5</span>
+                                </div>
+                            </div>
+                            <div class="exercise-feedback" id="feedback-t2"></div>
+                            <div class="exercise-explanation" id="explain-t2" style="display:none;">x方向放大2倍，y方向放大3倍，单位正方形变成2×3的长方形。面积=2×3=6，也等于行列式det=2×3-0×0=6。</div>
+                        </div>
                     </div>
                     <div class="concept-block">
-                        <h3>剪切变换 — "推斜一摞扑克牌"</h3>
-                        <p>想象一摞整齐的扑克牌，你从顶部横向推了一下。底部不动，顶部的牌被推到旁边。这就是剪切变换。</p>
-                        <p>剪切矩阵会让X坐标受到Y坐标的影响（或者反过来），从而产生"倾斜"的效果。斜体字体的生成就是剪切变换的应用。</p>
+                        <span class="block-tag concept">概念</span>
+                        <h3>剪切变换 — 推斜一摞扑克牌</h3>
+                        <p>想象一摞整齐的扑克牌放在桌上，你从顶部横向推了一下。底部被桌面固定不动，顶部的牌被推到旁边，整摞牌变成了斜的。这就是剪切变换——一个方向的坐标受到另一个方向坐标的影响。</p>
+                        <p>剪切变换在生活中很常见：斜体字体的生成就是X方向受到Y方向的"推动"；地质断层也是岩石层受到剪切力的结果。剪切不会改变面积，只是改变了形状。</p>
                         <div class="formula">$$ H(k) = \begin{bmatrix} 1 & k \\ 0 & 1 \end{bmatrix} $$</div>
-                        <div class="exercise-block" data-exercise="t2">
+                    </div>
+                    <div class="concept-block">
+                        <span class="block-tag concept">概念</span>
+                        <h3>复合变换 — 变换的接力赛</h3>
+                        <p>复合变换就是多个变换的"接力"：先旋转、再缩放、再剪切……每一步都在上一步的结果上继续变形。复合变换的矩阵，就是各个变换矩阵按顺序相乘的结果（注意：从右往左读）。</p>
+                        <p>就像工厂流水线：原材料（向量）先经过第一道工序（矩阵A），再经过第二道工序（矩阵B），最终成品就是 $BA\vec{v}$。顺序不同，结果天差地别。</p>
+                        <div class="exercise-block" data-exercise="t3">
                             <div class="exercise-header">
                                 <span class="exercise-badge hard">挑战</span>
                                 <span class="exercise-title">复合变换分析</span>
                             </div>
                             <p class="exercise-desc">先旋转45度，再沿X轴放大2倍。这个结果和"先放大2倍，再旋转45度"相同吗？</p>
                             <div class="exercise-choices">
-                                <div class="choice-item" data-choice="A" onclick="checkAnswer(this, 'B', 't2')">
+                                <div class="choice-item" data-choice="A" onclick="checkAnswer(this, 'B', 't3')">
                                     <span class="choice-letter">A</span>
                                     <span>相同，变换顺序不影响结果</span>
                                 </div>
-                                <div class="choice-item" data-choice="B" onclick="checkAnswer(this, 'B', 't2')">
+                                <div class="choice-item" data-choice="B" onclick="checkAnswer(this, 'B', 't3')">
                                     <span class="choice-letter">B</span>
                                     <span>不同，旋转和缩放的复合不满足交换律</span>
                                 </div>
-                                <div class="choice-item" data-choice="C" onclick="checkAnswer(this, 'B', 't2')">
+                                <div class="choice-item" data-choice="C" onclick="checkAnswer(this, 'B', 't3')">
                                     <span class="choice-letter">C</span>
                                     <span>只有当旋转角度是90度的倍数时才不同</span>
                                 </div>
                             </div>
-                            <div class="exercise-feedback" id="feedback-t2"></div>
+                            <div class="exercise-feedback" id="feedback-t3"></div>
+                            <div class="exercise-explanation" id="explain-t3" style="display:none;">旋转和缩放一般不可交换。先旋转再缩放，拉伸方向会跟着转；先缩放再旋转，拉伸方向保持坐标轴方向。两种顺序结果不同。</div>
                         </div>
                     </div>
                 </div>
@@ -693,9 +857,9 @@
                     </div>
                     <div class="concept-block">
                         <span class="block-tag concept">概念</span>
-                        <h3>行列式 — "变形前后的面积比"</h3>
-                        <p>想象你有一个边长为1的正方形，面积是1。经过一个线性变换后，它变成了一个平行四边形。行列式就是<strong>新平行四边形的面积</strong>！</p>
-                        <p>行列式为2，意味着变换让所有面积放大2倍；行列式为0.5，意味着面积缩小一半。如果行列式是负数，说明空间被"翻转"了（就像把一张纸翻到背面）。</p>
+                        <h3>行列式 — 变形前后的"面积秤"</h3>
+                        <p>想象你有一块边长为1的正方形橡皮泥，面积是1。你把它捏成一个平行四边形。行列式就是<strong>新图形的面积</strong>！它就像一个"面积秤"，精确测量变换对空间的拉伸或压缩程度。</p>
+                        <p>行列式为2，意味着变换让所有面积放大2倍；行列式为0.5，意味着面积缩小一半。如果行列式是<strong>负数</strong>，说明空间被"翻转"了（就像把一张纸翻到背面，或者把左手手套翻成右手手套）。</p>
                         <div class="formula">$$ \det(A) = a_{11}a_{22} - a_{12}a_{21} $$</div>
                         <div class="exercise-block" data-exercise="d1">
                             <div class="exercise-header">
@@ -718,12 +882,14 @@
                                 </div>
                             </div>
                             <div class="exercise-feedback" id="feedback-d1"></div>
+                            <div class="exercise-explanation" id="explain-d1" style="display:none;">行列式 = a₁₁a₂₂ - a₁₂a₂₁ = 2×3 - 0×0 = 6。这表示变换后面积变为原来的6倍。</div>
                         </div>
                     </div>
                     <div class="concept-block">
-                        <h3>行列式为零 — "信息被压扁了"</h3>
-                        <p>当行列式为0，意味着变换把平面"压扁"成了一条线（甚至一个点）。原本不同的点被映射到了同一个位置，<strong>信息丢失了</strong>。</p>
-                        <p>这就像把一张照片从3D压成2D——你永远无法从2D照片恢复出原始的3D信息。所以行列式为0的矩阵<strong>不可逆</strong>。</p>
+                        <span class="block-tag concept">概念</span>
+                        <h3>行列式为零 — 信息被"压扁"了</h3>
+                        <p>当行列式为0，意味着变换把平面"压扁"成了一条线（甚至一个点）。原本不同的点被映射到了同一个位置，<strong>信息永久丢失了</strong>。</p>
+                        <p>这就像把一张3D照片压成2D投影——你永远无法从2D照片恢复出原始的3D深度信息。所以行列式为0的矩阵<strong>不可逆</strong>，因为它把不同的事物混在了一起，再也无法区分。</p>
                         <div class="exercise-block" data-exercise="d2">
                             <div class="exercise-header">
                                 <span class="exercise-badge medium">进阶</span>
@@ -745,6 +911,36 @@
                                 </div>
                             </div>
                             <div class="exercise-feedback" id="feedback-d2"></div>
+                            <div class="exercise-explanation" id="explain-d2" style="display:none;">det = 1×4 - 2×2 = 0。面积变为0说明空间被压扁；信息丢失导致矩阵不可逆。两个说法都正确。</div>
+                        </div>
+                    </div>
+                    <div class="concept-block">
+                        <span class="block-tag concept">概念</span>
+                        <h3>行列式的符号 — 空间的"正反面"</h3>
+                        <p>行列式不仅告诉我们面积缩放了多少，还通过<strong>正负号</strong>告诉我们空间是否被"翻转"。正行列式表示"正面朝上"，负行列式表示"反面朝上"。</p>
+                        <p>想象左手手套：你无法通过旋转和拉伸把它变成右手手套，必须把它从里到外翻过来。这种"翻面"操作就会让行列式变号。这在三维空间中更加直观：行列式为正表示保持右手坐标系，为负表示变成了左手坐标系。</p>
+                        <div class="exercise-block" data-exercise="d3">
+                            <div class="exercise-header">
+                                <span class="exercise-badge hard">挑战</span>
+                                <span class="exercise-title">行列式的几何意义</span>
+                            </div>
+                            <p class="exercise-desc">反射矩阵 $\begin{bmatrix} -1 & 0 \\ 0 & 1 \end{bmatrix}$（沿y轴翻转）的行列式是多少？这代表什么几何意义？</p>
+                            <div class="exercise-choices">
+                                <div class="choice-item" data-choice="A" onclick="checkAnswer(this, 'A', 'd3')">
+                                    <span class="choice-letter">A</span>
+                                    <span>-1，表示空间被翻转，面积大小不变</span>
+                                </div>
+                                <div class="choice-item" data-choice="B" onclick="checkAnswer(this, 'A', 'd3')">
+                                    <span class="choice-letter">B</span>
+                                    <span>1，表示空间保持不变</span>
+                                </div>
+                                <div class="choice-item" data-choice="C" onclick="checkAnswer(this, 'A', 'd3')">
+                                    <span class="choice-letter">C</span>
+                                    <span>-1，表示面积变为原来的-1倍</span>
+                                </div>
+                            </div>
+                            <div class="exercise-feedback" id="feedback-d3"></div>
+                            <div class="exercise-explanation" id="explain-d3" style="display:none;">det = (-1)×1 - 0×0 = -1。负号表示空间被翻转（像照镜子），绝对值1表示面积大小不变。面积的"负值"在几何上表示方向改变。</div>
                         </div>
                     </div>
                 </div>
@@ -797,9 +993,9 @@
                     </div>
                     <div class="concept-block">
                         <span class="block-tag concept">概念</span>
-                        <h3>特征向量 — "变形中坚守方向的勇士"</h3>
-                        <p>想象一场大地震，地面被扭曲变形。大多数方向上的建筑都被推歪了，但<strong>有些特殊方向上的建筑只是被拉长或压扁，方向本身没有改变</strong>。这些特殊方向就是<strong>特征向量</strong>。</p>
-                        <p>特征向量告诉我们：在千变万化的变换中，哪些方向是"不变量"？理解了这些不变的方向，你就抓住了这个变换最核心的结构。</p>
+                        <h3>特征向量 — 变形中坚守方向的"勇士"</h3>
+                        <p>想象一场大地震，地面被剧烈扭曲。大多数方向上的建筑都被推歪了，但<strong>有些特殊方向上的建筑只是被拉长或压扁，方向本身没有改变</strong>。这些"坚守岗位"的特殊方向就是<strong>特征向量</strong>。</p>
+                        <p>特征向量是理解一个变换的"密码"——它告诉我们：在千变万化的变形中，哪些方向是"不变量"？抓住了这些不变的方向，你就抓住了这个变换最核心的结构。就像无论海浪如何汹涌，海岸线的大致走向始终不变。</p>
                         <div class="formula">$$ A\vec{v} = \lambda\vec{v} $$</div>
                         <div class="exercise-block" data-exercise="e1">
                             <div class="exercise-header">
@@ -822,12 +1018,14 @@
                                 </div>
                             </div>
                             <div class="exercise-feedback" id="feedback-e1"></div>
+                            <div class="exercise-explanation" id="explain-e1" style="display:none;">特征方程 A𝑣 = λ𝑣 的含义是：变换后向量方向不变，只是长度缩放λ倍。λ=3表示长度变为3倍。</div>
                         </div>
                     </div>
                     <div class="concept-block">
+                        <span class="block-tag concept">概念</span>
                         <h3>特征值 — "拉伸的倍数"</h3>
-                        <p>特征值 $\lambda$ 表示特征向量在变换中被拉伸了多少倍：</p>
-                        <p>• $\lambda > 1$：被<strong>拉长</strong>（就像橡皮筋被抻开）<br>• $0 < \lambda < 1$：被<strong>压缩</strong>（就像弹簧被压紧）<br>• $\lambda = 0$：被<strong>压没了</strong>（这个方向上信息完全丢失）<br>• $\lambda < 0$：<strong>反向</strong>拉伸（不仅长度变了，方向也反了）</p>
+                        <p>特征值 $\lambda$ 表示特征向量在变换中被拉伸了多少倍。它是一个简单的数字，却蕴含丰富的几何意义：</p>
+                        <p>• $\lambda > 1$：被<strong>拉长</strong>（就像橡皮筋被抻开，弹性形变）<br>• $0 < \lambda < 1$：被<strong>压缩</strong>（就像弹簧被压紧，体积减小）<br>• $\lambda = 0$：被<strong>压没了</strong>（这个方向上信息完全丢失，像被投影到平面上）<br>• $\lambda < 0$：<strong>反向</strong>拉伸（不仅长度变了，方向也反转180度）</p>
                         <div class="exercise-block" data-exercise="e2">
                             <div class="exercise-header">
                                 <span class="exercise-badge medium">进阶</span>
@@ -849,7 +1047,14 @@
                                 </div>
                             </div>
                             <div class="exercise-feedback" id="feedback-e2"></div>
+                            <div class="exercise-explanation" id="explain-e2" style="display:none;">旋转90度会改变所有非零向量的方向，不存在只被缩放而方向不变的向量。因此在实数范围内没有特征向量。</div>
                         </div>
+                    </div>
+                    <div class="concept-block">
+                        <span class="block-tag concept">概念</span>
+                        <h3>特征分解 — 揭开变换的"骨架"</h3>
+                        <p>任何一个复杂的变换，都可以被"拆解"成沿特征向量方向的简单拉伸。这就是<strong>特征分解</strong>：$A = PDP^{-1}$，其中 $P$ 的列是特征向量，$D$ 是对角矩阵（对角线上是特征值）。</p>
+                        <p>这就像把一个人的复杂动作分解成几个基本关节的转动——抓住了关节（特征向量）和转动幅度（特征值），你就理解了整个动作。特征分解在数据科学中无处不在：PCA降维、图像压缩、推荐系统……背后都是它在默默工作。</p>
                         <div class="exercise-block" data-exercise="e3">
                             <div class="exercise-header">
                                 <span class="exercise-badge hard">挑战</span>
@@ -871,6 +1076,30 @@
                                 </div>
                             </div>
                             <div class="exercise-feedback" id="feedback-e3"></div>
+                            <div class="exercise-explanation" id="explain-e3" style="display:none;">PCA通过对协方差矩阵做特征分解，找到数据方差最大的方向（特征向量），并按特征值大小排序，保留最重要的方向实现降维。</div>
+                        </div>
+                        <div class="exercise-block" data-exercise="e4">
+                            <div class="exercise-header">
+                                <span class="exercise-badge hard">挑战</span>
+                                <span class="exercise-title">特征值计算</span>
+                            </div>
+                            <p class="exercise-desc">矩阵 $\begin{bmatrix} 4 & 2 \\ 1 & 3 \end{bmatrix}$ 的一个特征值是5，另一个特征值是多少？（提示：特征值之和等于矩阵的迹，即对角线元素之和）</p>
+                            <div class="exercise-choices">
+                                <div class="choice-item" data-choice="A" onclick="checkAnswer(this, 'A', 'e4')">
+                                    <span class="choice-letter">A</span>
+                                    <span>2</span>
+                                </div>
+                                <div class="choice-item" data-choice="B" onclick="checkAnswer(this, 'A', 'e4')">
+                                    <span class="choice-letter">B</span>
+                                    <span>3</span>
+                                </div>
+                                <div class="choice-item" data-choice="C" onclick="checkAnswer(this, 'A', 'e4')">
+                                    <span class="choice-letter">C</span>
+                                    <span>1</span>
+                                </div>
+                            </div>
+                            <div class="exercise-feedback" id="feedback-e4"></div>
+                            <div class="exercise-explanation" id="explain-e4" style="display:none;">迹 = 4 + 3 = 7。特征值之和等于迹，所以另一个特征值 = 7 - 5 = 2。也可以用行列式验证：det = 4×3 - 2×1 = 10，5×2=10，正确。</div>
                         </div>
                     </div>
                 </div>
@@ -1102,7 +1331,7 @@
         <div class="quiz-body">
             <div class="quiz-progress">
                 <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="quizProgressFill"></div></div>
-                <span class="quiz-progress-text" id="quizProgressText">0/14</span>
+                <span class="quiz-progress-text" id="quizProgressText">0/22</span>
             </div>
             <div class="quiz-stats">
                 <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg> <span id="quizCorrect">0</span> 正确</span>
@@ -1111,6 +1340,7 @@
             <div class="quiz-mastery">
                 当前等级：<span class="quiz-mastery-level" id="quizMastery">未开始</span>
             </div>
+            <button class="quiz-reset-all" onclick="resetAllQuiz()">重置全部答题</button>
         </div>
     </div>
 

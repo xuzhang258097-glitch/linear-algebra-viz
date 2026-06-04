@@ -1204,6 +1204,50 @@ a.app-card .card-link {
     margin-bottom: 0.75rem;
 }
 
+.exercise-explanation {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(91, 138, 114, 0.08), rgba(107, 140, 174, 0.05));
+    border-left: 3px solid var(--accent-sage);
+    border-radius: 0 10px 10px 0;
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    animation: fadeSlideIn 0.4s ease;
+}
+
+@keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.choice-item.answered {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.choice-item.correct-revealed {
+    background: rgba(91, 138, 114, 0.12);
+    border-color: var(--accent-sage);
+}
+
+.exercise-reset-btn {
+    margin-top: 0.75rem;
+    padding: 0.4rem 0.875rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--accent-blue);
+    background: rgba(107, 140, 174, 0.08);
+    border: 1px solid rgba(107, 140, 174, 0.2);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.exercise-reset-btn:hover {
+    background: rgba(107, 140, 174, 0.15);
+}
+
 .exercise-header {
     display: flex;
     align-items: center;
@@ -1437,6 +1481,26 @@ a.app-card .card-link {
 .quiz-mastery-level {
     font-weight: 700;
     color: var(--accent-sage);
+}
+
+.quiz-reset-all {
+    margin-top: 0.75rem;
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: transparent;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.quiz-reset-all:hover {
+    color: var(--accent-rose);
+    border-color: rgba(201, 123, 123, 0.3);
+    background: rgba(201, 123, 123, 0.04);
 }
 
 /* ============================================

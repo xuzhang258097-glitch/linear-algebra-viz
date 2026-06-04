@@ -561,10 +561,10 @@ function applyMatrixPreset(preset) {
    Quiz Assessment System
    ============================================ */
 const quizState = {
-    total: 14,
+    total: 22,
     answered: new Set(),
-    correct: 0,
-    wrong: 0
+    correct: new Set(),
+    wrong: new Set()
 };
 
 function checkAnswer(element, correctChoice, exerciseId) {
@@ -574,6 +574,7 @@ function checkAnswer(element, correctChoice, exerciseId) {
     const userChoice = element.dataset.choice;
     const isCorrect = userChoice === correctChoice;
     const feedbackEl = document.getElementById('feedback-' + exerciseId);
+    const explainEl = document.getElementById('explain-' + exerciseId);
     const exerciseBlock = element.closest('.exercise-block');
 
     // Style choices
@@ -583,21 +584,96 @@ function checkAnswer(element, correctChoice, exerciseId) {
             item.classList.add('correct');
         } else if (item.dataset.choice === userChoice && !isCorrect) {
             item.classList.add('wrong');
+        } else {
+            item.classList.add('answered');
         }
     });
 
     // Show feedback
     if (isCorrect) {
-        quizState.correct++;
+        quizState.correct.add(exerciseId);
         feedbackEl.textContent = '回答正确！';
         feedbackEl.className = 'exercise-feedback show correct';
         if (AudioSystem && AudioSystem.enabled) AudioSystem.playSuccess();
     } else {
-        quizState.wrong++;
+        quizState.wrong.add(exerciseId);
         feedbackEl.textContent = '回答错误。正确答案是 ' + correctChoice + '。';
         feedbackEl.className = 'exercise-feedback show wrong';
         if (AudioSystem && AudioSystem.enabled) AudioSystem.playClick();
     }
+
+    // Show explanation if available
+    if (explainEl) {
+        explainEl.style.display = 'block';
+    }
+
+    // Add reset button
+    if (!exerciseBlock.querySelector('.exercise-reset-btn')) {
+        const resetBtn = document.createElement('button');
+        resetBtn.className = 'exercise-reset-btn';
+        resetBtn.textContent = '重新答题';
+        resetBtn.onclick = () => resetExercise(exerciseId);
+        exerciseBlock.appendChild(resetBtn);
+    }
+
+    updateQuizPanel();
+}
+
+function resetExercise(exerciseId) {
+    quizState.answered.delete(exerciseId);
+    quizState.correct.delete(exerciseId);
+    quizState.wrong.delete(exerciseId);
+
+    const feedbackEl = document.getElementById('feedback-' + exerciseId);
+    const explainEl = document.getElementById('explain-' + exerciseId);
+    const exerciseBlock = document.querySelector('.exercise-block[data-exercise="' + exerciseId + '"]');
+
+    if (feedbackEl) {
+        feedbackEl.textContent = '';
+        feedbackEl.className = 'exercise-feedback';
+    }
+    if (explainEl) {
+        explainEl.style.display = 'none';
+    }
+
+    if (exerciseBlock) {
+        exerciseBlock.querySelectorAll('.choice-item').forEach(item => {
+            item.style.pointerEvents = 'auto';
+            item.classList.remove('correct', 'wrong', 'answered');
+        });
+        const resetBtn = exerciseBlock.querySelector('.exercise-reset-btn');
+        if (resetBtn) resetBtn.remove();
+    }
+
+    updateQuizPanel();
+}
+
+function resetAllQuiz() {
+    quizState.answered.clear();
+    quizState.correct.clear();
+    quizState.wrong.clear();
+
+    document.querySelectorAll('.exercise-block').forEach(block => {
+        const exId = block.dataset.exercise;
+        const feedbackEl = document.getElementById('feedback-' + exId);
+        const explainEl = document.getElementById('explain-' + exId);
+
+        if (feedbackEl) {
+            feedbackEl.textContent = '';
+            feedbackEl.className = 'exercise-feedback';
+        }
+        if (explainEl) {
+            explainEl.style.display = 'none';
+        }
+
+        block.querySelectorAll('.choice-item').forEach(item => {
+            item.style.pointerEvents = 'auto';
+            item.classList.remove('correct', 'wrong', 'answered');
+        });
+
+        const resetBtn = block.querySelector('.exercise-reset-btn');
+        if (resetBtn) resetBtn.remove();
+    });
 
     updateQuizPanel();
 }
@@ -605,26 +681,34 @@ function checkAnswer(element, correctChoice, exerciseId) {
 function updateQuizPanel() {
     const answered = quizState.answered.size;
     const total = quizState.total;
-    const correct = quizState.correct;
+    const correct = quizState.correct.size;
+    const wrong = quizState.wrong.size;
 
-    document.getElementById('quizProgressText').textContent = answered + '/' + total;
-    document.getElementById('quizProgressFill').style.width = (answered / total * 100) + '%';
-    document.getElementById('quizCorrect').textContent = correct;
-    document.getElementById('quizWrong').textContent = quizState.wrong;
+    const progressText = document.getElementById('quizProgressText');
+    const progressFill = document.getElementById('quizProgressFill');
+    const correctEl = document.getElementById('quizCorrect');
+    const wrongEl = document.getElementById('quizWrong');
+
+    if (progressText) progressText.textContent = answered + '/' + total;
+    if (progressFill) progressFill.style.width = (answered / total * 100) + '%';
+    if (correctEl) correctEl.textContent = correct;
+    if (wrongEl) wrongEl.textContent = wrong;
 
     const masteryEl = document.getElementById('quizMastery');
+    if (!masteryEl) return;
+
     const ratio = answered > 0 ? correct / answered : 0;
 
     if (answered === 0) {
         masteryEl.textContent = '未开始';
         masteryEl.style.color = 'var(--text-muted)';
-    } else if (ratio >= 0.9 && answered >= 10) {
+    } else if (ratio >= 0.9 && answered >= 15) {
         masteryEl.textContent = '已精通';
         masteryEl.style.color = 'var(--accent-sage)';
-    } else if (ratio >= 0.7 && answered >= 6) {
+    } else if (ratio >= 0.75 && answered >= 10) {
         masteryEl.textContent = '掌握良好';
         masteryEl.style.color = 'var(--accent-blue)';
-    } else if (ratio >= 0.5) {
+    } else if (ratio >= 0.55) {
         masteryEl.textContent = '入门水平';
         masteryEl.style.color = 'var(--accent-apricot)';
     } else {
