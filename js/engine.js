@@ -1,6 +1,7 @@
 /**
  * LinearViz Core Visualization Engine
  * Reusable Canvas-based math visualization primitives
+ * Enhanced with drag interaction, rubber-sheet plane, and step animation
  */
 
 const VizEngine = {
@@ -8,15 +9,328 @@ const VizEngine = {
     colors: {
         sage: '#5b8a72',
         sageLight: 'rgba(91, 138, 114, 0.3)',
+        sageGlow: 'rgba(91, 138, 114, 0.15)',
         blue: '#6b8cae',
         blueLight: 'rgba(107, 140, 174, 0.3)',
+        blueGlow: 'rgba(107, 140, 174, 0.15)',
         apricot: '#d4a574',
         apricotLight: 'rgba(212, 165, 116, 0.3)',
+        apricotGlow: 'rgba(212, 165, 116, 0.15)',
         rose: '#c97b7b',
         roseLight: 'rgba(201, 123, 123, 0.3)',
+        roseGlow: 'rgba(201, 123, 123, 0.15)',
         grid: 'rgba(0, 0, 0, 0.06)',
         axis: 'rgba(0, 0, 0, 0.25)',
-        text: '#6b6b6b'
+        text: '#6b6b6b',
+        highlight: '#e8a87c'
+    },
+
+    // Active drag state
+    dragState: {
+        active: false,
+        target: null,
+        canvas: null,
+        startX: 0,
+        startY: 0,
+        onDrag: null,
+        onEnd: null
+    },
+
+    // Rubber-sheet plane state (shared across visualizations)
+    rubberSheet: {
+        enabled: false,
+        gridPoints: [],
+        transformedPoints: [],
+        matrix: [1, 0, 0, 1],
+        showDeformation: true,
+        highlightAxis: true
+    },
+
+    // Animation state
+    animState: {
+        active: false,
+        step: 0,
+        totalSteps: 0,
+        currentMatrix: [1, 0, 0, 1],
+        targetMatrix: [1, 0, 0, 1],
+        intermediateMatrix: [1, 0, 0, 1],
+        onStep: null,
+        onComplete: null,
+        speed: 1
+    },
+
+    /**
+     * Enable drag interaction on a canvas
+     */
+    enableDrag(canvas, options = {}) {
+        if (!canvas) return;
+
+        const { onDragStart, onDrag, onDragEnd, hitTest } = options;
+
+        const getPos = (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
+        };
+
+        const handleStart = (e) => {
+            const pos = getPos(e);
+            if (hitTest && !hitTest(pos.x, pos.y)) return;
+
+            this.dragState.active = true;
+            this.dragState.canvas = canvas;
+            this.dragState.startX = pos.x;
+            this.dragState.startY = pos.y;
+            this.dragState.onDrag = onDrag;
+            this.dragState.onEnd = onDragEnd;
+
+            if (onDragStart) onDragStart(pos.x, pos.y);
+            canvas.style.cursor = 'grabbing';
+        };
+
+        const handleMove = (e) => {
+            if (!this.dragState.active || this.dragState.canvas !== canvas) return;
+            e.preventDefault();
+            const pos = getPos(e);
+            if (this.dragState.onDrag) {
+                this.dragState.onDrag(pos.x, pos.y, pos.x - this.dragState.startX, pos.y - this.dragState.startY);
+            }
+            this.dragState.startX = pos.x;
+            this.dragState.startY = pos.y;
+        };
+
+        const handleEnd = () => {
+            if (!this.dragState.active || this.dragState.canvas !== canvas) return;
+            if (this.dragState.onEnd) this.dragState.onEnd();
+            this.dragState.active = false;
+            this.dragState.canvas = null;
+            canvas.style.cursor = 'grab';
+        };
+
+        canvas.addEventListener('mousedown', handleStart);
+        canvas.addEventListener('mousemove', handleMove);
+        canvas.addEventListener('mouseup', handleEnd);
+        canvas.addEventListener('mouseleave', handleEnd);
+
+        // Touch support
+        canvas.addEventListener('touchstart', handleStart, { passive: false });
+        canvas.addEventListener('touchmove', handleMove, { passive: false });
+        canvas.addEventListener('touchend', handleEnd);
+
+        canvas.style.cursor = 'grab';
+    },
+
+    /**
+     * Initialize rubber-sheet plane grid
+     */
+    initRubberSheet(width, height, spacing = 30) {
+        const cx = width / 2;
+        const cy = height / 2;
+        const cols = Math.ceil(width / spacing) + 2;
+        const rows = Math.ceil(height / spacing) + 2;
+        const points = [];
+
+        for (let i = 0; i < cols; i++) {
+            for (let j = 0; j < rows; j++) {
+                const x = (i - cols / 2) * spacing;
+                const y = (j - rows / 2) * spacing;
+                points.push({
+                    originalX: x,
+                    originalY: y,
+                    x: x,
+                    y: y,
+                    screenX: cx + x,
+                    screenY: cy + y,
+                    u: i / (cols - 1),
+                    v: j / (rows - 1)
+                });
+            }
+        }
+
+        this.rubberSheet.gridPoints = points;
+        this.rubberSheet.transformedPoints = points.map(p => ({ ...p }));
+        this.rubberSheet.enabled = true;
+        return points;
+    },
+
+    /**
+     * Apply matrix transformation to rubber-sheet plane
+     */
+    transformRubberSheet(matrix) {
+        this.rubberSheet.matrix = matrix;
+        const [a, b, c, d] = matrix;
+
+        this.rubberSheet.transformedPoints = this.rubberSheet.gridPoints.map(p => {
+            const tx = a * p.originalX + b * p.originalY;
+            const ty = c * p.originalX + d * p.originalY;
+            return {
+                ...p,
+                x: tx,
+                y: ty,
+                screenX: p.screenX - p.originalX + tx,
+                screenY: p.screenY - p.originalY + ty
+            };
+        });
+    },
+
+    /**
+     * Draw rubber-sheet plane with deformation visualization
+     */
+    drawRubberSheet(ctx, width, height, options = {}) {
+        if (!this.rubberSheet.enabled) return;
+
+        const { showGrid = true, showCells = true, color = this.colors.sage, opacity = 0.4 } = options;
+        const points = this.rubberSheet.transformedPoints;
+        const cols = Math.ceil(width / 30) + 2;
+        const rows = points.length / cols;
+
+        ctx.save();
+
+        // Draw deformed grid lines
+        if (showGrid) {
+            ctx.strokeStyle = color;
+            ctx.globalAlpha = opacity;
+            ctx.lineWidth = 0.8;
+
+            // Horizontal lines
+            for (let j = 0; j < rows; j++) {
+                ctx.beginPath();
+                for (let i = 0; i < cols; i++) {
+                    const p = points[i * Math.floor(rows) + j];
+                    if (!p) continue;
+                    const cx = width / 2 + p.x;
+                    const cy = height / 2 - p.y;
+                    if (i === 0) ctx.moveTo(cx, cy);
+                    else ctx.lineTo(cx, cy);
+                }
+                ctx.stroke();
+            }
+
+            // Vertical lines
+            for (let i = 0; i < cols; i++) {
+                ctx.beginPath();
+                for (let j = 0; j < rows; j++) {
+                    const p = points[i * Math.floor(rows) + j];
+                    if (!p) continue;
+                    const cx = width / 2 + p.x;
+                    const cy = height / 2 - p.y;
+                    if (j === 0) ctx.moveTo(cx, cy);
+                    else ctx.lineTo(cx, cy);
+                }
+                ctx.stroke();
+            }
+        }
+
+        // Draw basis vectors
+        if (options.showBasis !== false) {
+            const [a, b, c, d] = this.rubberSheet.matrix;
+            const cx = width / 2;
+            const cy = height / 2;
+            const scale = 60;
+
+            // Original basis (faint)
+            ctx.globalAlpha = opacity * 0.5;
+            ctx.strokeStyle = this.colors.grid;
+            ctx.setLineDash([3, 3]);
+            this.drawArrow(ctx, cx, cy, cx + scale, cy, this.colors.grid, 1.5);
+            this.drawArrow(ctx, cx, cy, cx, cy - scale, this.colors.grid, 1.5);
+            ctx.setLineDash([]);
+
+            // Transformed basis (bold)
+            ctx.globalAlpha = opacity * 1.2;
+            this.drawArrow(ctx, cx, cy, cx + a * scale, cy - c * scale, this.colors.sage, 2.5);
+            this.drawArrow(ctx, cx, cy, cx + b * scale, cy - d * scale, this.colors.blue, 2.5);
+        }
+
+        ctx.restore();
+    },
+
+    /**
+     * Start step-by-step animation for matrix transformation
+     */
+    animateSteps(steps, options = {}) {
+        const { onStep, onComplete, speed = 800 } = options;
+        this.animState.active = true;
+        this.animState.step = 0;
+        this.animState.totalSteps = steps.length;
+        this.animState.steps = steps;
+        this.animState.onStep = onStep;
+        this.animState.onComplete = onComplete;
+        this.animState.speed = speed;
+
+        const runStep = () => {
+            if (this.animState.step >= this.animState.totalSteps) {
+                this.animState.active = false;
+                if (onComplete) onComplete();
+                return;
+            }
+
+            const step = this.animState.steps[this.animState.step];
+            if (onStep) onStep(step, this.animState.step);
+            this.animState.step++;
+
+            setTimeout(runStep, speed);
+        };
+
+        runStep();
+    },
+
+    /**
+     * Draw arrow from point to point
+     */
+    drawArrow(ctx, fromX, fromY, toX, toY, color, lineWidth = 2) {
+        ctx.save();
+        ctx.strokeStyle = color;
+        ctx.fillStyle = color;
+        ctx.lineWidth = lineWidth;
+        ctx.lineCap = 'round';
+
+        ctx.beginPath();
+        ctx.moveTo(fromX, fromY);
+        ctx.lineTo(toX, toY);
+        ctx.stroke();
+
+        const angle = Math.atan2(toY - fromY, toX - fromX);
+        const headLen = 10;
+        ctx.beginPath();
+        ctx.moveTo(toX, toY);
+        ctx.lineTo(toX - headLen * Math.cos(angle - Math.PI / 6), toY - headLen * Math.sin(angle - Math.PI / 6));
+        ctx.lineTo(toX - headLen * Math.cos(angle + Math.PI / 6), toY - headLen * Math.sin(angle + Math.PI / 6));
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+    },
+
+    /**
+     * Highlight associated formula element
+     */
+    highlightFormula(selector, duration = 1500) {
+        const el = document.querySelector(selector);
+        if (!el) return;
+        el.classList.add('formula-highlight');
+        setTimeout(() => el.classList.remove('formula-highlight'), duration);
+    },
+
+    /**
+     * Sync numeric value display with drag interaction
+     */
+    syncValueDisplay(elementId, value, format = 'float') {
+        const el = document.getElementById(elementId);
+        if (!el) return;
+
+        let display;
+        switch (format) {
+            case 'int': display = Math.round(value); break;
+            case 'deg': display = Math.round(value * 180 / Math.PI) + '°'; break;
+            case 'float': default: display = value.toFixed(2); break;
+        }
+        el.textContent = display;
+        el.classList.add('value-sync');
+        setTimeout(() => el.classList.remove('value-sync'), 300);
     },
 
     /**

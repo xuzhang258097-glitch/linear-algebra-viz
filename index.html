@@ -359,21 +359,22 @@
                             <button class="viz-btn" data-viz="dot">点积演示</button>
                         </div>
                         <canvas id="vectorViz"></canvas>
+                        <div class="drag-hint">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 11l5-5 5 5M7 17l5-5 5 5"/></svg>
+                            拖拽箭头末端改变向量
+                        </div>
                         <div class="viz-controls">
                             <div class="control-group">
-                                <label>向量 A 角度</label>
-                                <input type="range" id="vecAAngle" min="0" max="360" value="45">
-                                <span class="control-value">45°</span>
+                                <label>向量 A</label>
+                                <div class="vector-values" id="vecAValue">[3.00, 2.00]</div>
                             </div>
                             <div class="control-group">
-                                <label>向量 B 角度</label>
-                                <input type="range" id="vecBAngle" min="0" max="360" value="135">
-                                <span class="control-value">135°</span>
+                                <label>向量 B</label>
+                                <div class="vector-values" id="vecBValue">[-2.00, 3.00]</div>
                             </div>
                             <div class="control-group">
-                                <label>缩放倍数</label>
-                                <input type="range" id="vecScale" min="0.5" max="2" step="0.1" value="1">
-                                <span class="control-value">1.0x</span>
+                                <label>点积结果</label>
+                                <div class="vector-values highlight" id="dotProductValue">0.00</div>
                             </div>
                         </div>
                     </div>
@@ -480,8 +481,13 @@
                         <div class="viz-toolbar">
                             <button class="viz-btn active" data-viz="multiply">矩阵乘法</button>
                             <button class="viz-btn" data-viz="transform">变换效果</button>
+                            <button class="viz-btn" data-viz="abba">AB vs BA</button>
                         </div>
                         <canvas id="matrixViz"></canvas>
+                        <div class="drag-hint">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/></svg>
+                            拖拽网格控制点定义变形
+                        </div>
                         <div class="viz-controls">
                             <div class="matrix-inputs">
                                 <div class="matrix-editor">
@@ -498,6 +504,13 @@
                             <div class="control-group">
                                 <label>动画速度</label>
                                 <input type="range" id="matrixAnimSpeed" min="0.1" max="2" step="0.1" value="1">
+                            </div>
+                            <div class="control-group comparison-toggle" id="abbaControls" style="display:none;">
+                                <label>变换顺序对比</label>
+                                <div class="toggle-btns">
+                                    <button class="toggle-btn active" data-order="ab">先A后B</button>
+                                    <button class="toggle-btn" data-order="ba">先B后A</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -631,6 +644,12 @@
                                 <label>剪切系数</label>
                                 <input type="range" id="shearK" min="-2" max="2" step="0.1" value="0.5">
                                 <span class="control-value">0.5</span>
+                            </div>
+                            <div class="control-group" id="composeAnimControl" style="display:none;">
+                                <button class="console-btn" onclick="playTransformAnimation()" style="width:100%;">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;margin-right:4px;"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                    播放分步动画
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -986,10 +1005,52 @@
                     </div>
                 </div>
             </div>
-            <div class="playground-canvas-wrapper">
-                <canvas id="playgroundCanvas"></canvas>
-                <div class="canvas-overlay">
-                    <span class="coord-display" id="coordDisplay">(0, 0)</span>
+            <div class="playground-main">
+                <div class="playground-canvas-wrapper">
+                    <canvas id="playgroundCanvas"></canvas>
+                    <div class="canvas-overlay">
+                        <span class="coord-display" id="coordDisplay">(0, 0)</span>
+                    </div>
+                </div>
+                <!-- Free Sandbox Console -->
+                <div class="sandbox-console">
+                    <div class="console-header">
+                        <h4>自由沙盒控制台</h4>
+                        <span class="console-hint">输入自定义参数实时生成图形</span>
+                    </div>
+                    <div class="console-body">
+                        <div class="console-inputs">
+                            <div class="input-row">
+                                <label>向量 v</label>
+                                <input type="number" id="sandboxVx" value="3" step="0.1" placeholder="x">
+                                <input type="number" id="sandboxVy" value="2" step="0.1" placeholder="y">
+                            </div>
+                            <div class="input-row">
+                                <label>矩阵 M</label>
+                                <div class="sandbox-matrix">
+                                    <input type="number" id="sandboxM00" value="1" step="0.1">
+                                    <input type="number" id="sandboxM01" value="0" step="0.1">
+                                    <input type="number" id="sandboxM10" value="0" step="0.1">
+                                    <input type="number" id="sandboxM11" value="1" step="0.1">
+                                </div>
+                            </div>
+                            <div class="input-row">
+                                <label>标量 k</label>
+                                <input type="number" id="sandboxK" value="2" step="0.1">
+                            </div>
+                        </div>
+                        <div class="console-actions">
+                            <button class="console-btn" onclick="sandboxApplyVector()">绘制向量</button>
+                            <button class="console-btn" onclick="sandboxApplyMatrix()">应用矩阵</button>
+                            <button class="console-btn" onclick="sandboxApplyScalar()">数乘</button>
+                            <button class="console-btn" onclick="sandboxAnimateTransform()">播放变换动画</button>
+                            <button class="console-btn secondary" onclick="sandboxClear()">清空画布</button>
+                        </div>
+                        <div class="console-output" id="sandboxOutput">
+                            <span class="output-label">结果:</span>
+                            <span class="output-value" id="sandboxResult">等待操作...</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

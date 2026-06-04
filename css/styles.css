@@ -1032,7 +1032,7 @@ a.app-card .card-link {
     margin: 0 auto;
     display: grid;
     grid-template-columns: 260px 1fr;
-    min-height: 600px;
+    min-height: 700px;
 }
 
 .playground-sidebar {
@@ -1711,4 +1711,474 @@ button:focus-visible,
 input:focus-visible {
     outline: 2px solid var(--accent-sage);
     outline-offset: 2px;
+}
+
+/* ============================================
+   Drag Interaction Styles
+   ============================================ */
+.drag-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    background: rgba(0, 0, 0, 0.02);
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.drag-hint svg {
+    opacity: 0.5;
+}
+
+.vector-values {
+    font-family: var(--font-heading);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--accent-sage);
+    background: var(--accent-sage-soft);
+    padding: 0.375rem 0.75rem;
+    border-radius: 8px;
+    min-width: 80px;
+    text-align: center;
+}
+
+.vector-values.highlight {
+    color: var(--accent-apricot);
+    background: var(--accent-apricot-soft);
+}
+
+.value-sync {
+    animation: valueSync 0.3s ease;
+}
+
+@keyframes valueSync {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); background: var(--accent-sage); color: white; }
+    100% { transform: scale(1); }
+}
+
+/* Draggable vector handles */
+.vector-handle {
+    cursor: grab;
+    transition: r 0.2s ease;
+}
+
+.vector-handle:hover {
+    r: 8;
+    filter: drop-shadow(0 2px 4px rgba(91, 138, 114, 0.4));
+}
+
+.vector-handle.dragging {
+    cursor: grabbing;
+    r: 10;
+}
+
+/* Grid control points */
+.grid-control-point {
+    cursor: grab;
+    transition: all 0.2s ease;
+}
+
+.grid-control-point:hover {
+    r: 8;
+    stroke-width: 3;
+    filter: drop-shadow(0 2px 4px rgba(107, 140, 174, 0.4));
+}
+
+.grid-control-point.dragging {
+    cursor: grabbing;
+    r: 10;
+    stroke: var(--accent-sage);
+}
+
+/* Formula highlight animation */
+.formula-highlight {
+    animation: formulaHighlight 1.5s ease;
+}
+
+@keyframes formulaHighlight {
+    0%, 100% { background: rgba(0, 0, 0, 0.02); }
+    50% { background: rgba(91, 138, 114, 0.15); box-shadow: 0 0 0 2px var(--accent-sage-soft); }
+}
+
+/* ============================================
+   AB vs BA Comparison Mode
+   ============================================ */
+.comparison-toggle {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.toggle-btns {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.toggle-btn {
+    flex: 1;
+    padding: 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: rgba(0, 0, 0, 0.04);
+    border-radius: 8px;
+    transition: all var(--duration-fast);
+}
+
+.toggle-btn:hover {
+    background: rgba(0, 0, 0, 0.08);
+}
+
+.toggle-btn.active {
+    background: var(--accent-sage-soft);
+    color: var(--accent-sage);
+    font-weight: 600;
+}
+
+/* Split view for comparison */
+.comparison-canvas {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    height: 300px;
+}
+
+.comparison-panel {
+    position: relative;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.comparison-label {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    background: var(--glass-bg);
+    backdrop-filter: blur(8px);
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--accent-sage);
+    z-index: 10;
+}
+
+/* ============================================
+   Sandbox Console Styles
+   ============================================ */
+.playground-main {
+    display: flex;
+    flex-direction: column;
+}
+
+.sandbox-console {
+    background: rgba(255, 255, 255, 0.6);
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 1.25rem;
+}
+
+.console-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.console-header h4 {
+    font-family: var(--font-heading);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.console-hint {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.console-body {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    align-items: start;
+}
+
+.console-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.input-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.input-row label {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    min-width: 60px;
+}
+
+.input-row input[type="number"] {
+    width: 70px;
+    padding: 0.375rem 0.5rem;
+    font-size: 0.875rem;
+    text-align: center;
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.8);
+    color: var(--text-primary);
+    outline: none;
+    transition: all var(--duration-fast);
+}
+
+.input-row input[type="number"]:focus {
+    border-color: var(--accent-sage);
+    box-shadow: 0 0 0 3px var(--accent-sage-soft);
+}
+
+.sandbox-matrix {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.375rem;
+}
+
+.sandbox-matrix input[type="number"] {
+    width: 55px;
+}
+
+.console-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-content: start;
+}
+
+.console-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: white;
+    background: var(--accent-sage);
+    border-radius: 8px;
+    transition: all var(--duration-fast);
+    white-space: nowrap;
+}
+
+.console-btn:hover {
+    background: var(--accent-sage-light);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(91, 138, 114, 0.3);
+}
+
+.console-btn.secondary {
+    background: var(--text-muted);
+}
+
+.console-btn.secondary:hover {
+    background: var(--text-secondary);
+}
+
+.console-output {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 0.875rem;
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 8px;
+    margin-top: 0.5rem;
+}
+
+.output-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.output-value {
+    font-family: var(--font-heading);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--accent-sage);
+}
+
+/* ============================================
+   Rubber Sheet Plane Visualization
+   ============================================ */
+.rubber-sheet-container {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    background: linear-gradient(135deg, rgba(240,249,244,0.8), rgba(216,237,227,0.6));
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.rubber-sheet-container canvas {
+    width: 100%;
+    height: 100%;
+}
+
+.rubber-sheet-overlay {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.rubber-sheet-legend {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.75rem;
+    background: var(--glass-bg);
+    backdrop-filter: blur(8px);
+    border-radius: 8px;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+}
+
+/* Step animation controls */
+.step-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.02);
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.step-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--accent-sage);
+    background: var(--accent-sage-soft);
+    border-radius: 8px;
+    transition: all var(--duration-fast);
+}
+
+.step-btn:hover {
+    background: var(--accent-sage);
+    color: white;
+}
+
+.step-indicator {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.step-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--bg-tertiary);
+    transition: all var(--duration-fast);
+}
+
+.step-dot.active {
+    background: var(--accent-sage);
+    transform: scale(1.2);
+}
+
+.step-dot.completed {
+    background: var(--accent-sage-light);
+}
+
+/* Transform animation overlay */
+.transform-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 1rem 1.5rem;
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.transform-overlay.show {
+    opacity: 1;
+}
+
+.transform-overlay .step-title {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.transform-overlay .step-desc {
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+}
+
+/* ============================================
+   Enhanced Responsive for New Features
+   ============================================ */
+@media (max-width: 1024px) {
+    .console-body {
+        grid-template-columns: 1fr;
+    }
+
+    .console-actions {
+        justify-content: center;
+    }
+
+    .comparison-canvas {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+
+    .comparison-panel {
+        height: 250px;
+    }
+}
+
+@media (max-width: 768px) {
+    .sandbox-console {
+        padding: 1rem;
+    }
+
+    .input-row {
+        flex-wrap: wrap;
+    }
+
+    .console-btn {
+        flex: 1;
+        min-width: 100px;
+    }
+
+    .drag-hint {
+        font-size: 0.6875rem;
+    }
 }

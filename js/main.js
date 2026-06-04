@@ -637,3 +637,311 @@ function toggleQuiz() {
     const panel = document.getElementById('quizPanel');
     panel.classList.toggle('collapsed');
 }
+
+/* ============================================
+   Sandbox Console Functions
+   ============================================ */
+function sandboxGetValues() {
+    return {
+        v: [
+            parseFloat(document.getElementById('sandboxVx').value) || 0,
+            parseFloat(document.getElementById('sandboxVy').value) || 0
+        ],
+        m: [
+            parseFloat(document.getElementById('sandboxM00').value) || 0,
+            parseFloat(document.getElementById('sandboxM01').value) || 0,
+            parseFloat(document.getElementById('sandboxM10').value) || 0,
+            parseFloat(document.getElementById('sandboxM11').value) || 0
+        ],
+        k: parseFloat(document.getElementById('sandboxK').value) || 0
+    };
+}
+
+function sandboxUpdateResult(text) {
+    const el = document.getElementById('sandboxResult');
+    if (el) {
+        el.textContent = text;
+        el.classList.add('value-sync');
+        setTimeout(() => el.classList.remove('value-sync'), 300);
+    }
+}
+
+function sandboxApplyVector() {
+    const { v } = sandboxGetValues();
+    const canvas = document.getElementById('playgroundCanvas');
+    if (canvas) {
+        canvas.dispatchEvent(new CustomEvent('sandboxvector', { detail: { vector: v } }));
+    }
+    sandboxUpdateResult(`向量 v = [${v[0].toFixed(2)}, ${v[1].toFixed(2)}]`);
+    if (AudioSystem && AudioSystem.enabled) AudioSystem.playClick();
+}
+
+function sandboxApplyMatrix() {
+    const { m } = sandboxGetValues();
+    const canvas = document.getElementById('playgroundCanvas');
+    if (canvas) {
+        canvas.dispatchEvent(new CustomEvent('sandboxmatrix', { detail: { matrix: m } }));
+    }
+    sandboxUpdateResult(`矩阵 M = [[${m[0].toFixed(2)}, ${m[1].toFixed(2)}], [${m[2].toFixed(2)}, ${m[3].toFixed(2)}]]`);
+    if (AudioSystem && AudioSystem.enabled) AudioSystem.playMatrixUpdate();
+}
+
+function sandboxApplyScalar() {
+    const { v, k } = sandboxGetValues();
+    const result = [k * v[0], k * v[1]];
+    const canvas = document.getElementById('playgroundCanvas');
+    if (canvas) {
+        canvas.dispatchEvent(new CustomEvent('sandboxscalar', { detail: { vector: v, scalar: k, result } }));
+    }
+    sandboxUpdateResult(`${k} * [${v[0].toFixed(2)}, ${v[1].toFixed(2)}] = [${result[0].toFixed(2)}, ${result[1].toFixed(2)}]`);
+    if (AudioSystem && AudioSystem.enabled) AudioSystem.playSuccess();
+}
+
+function sandboxAnimateTransform() {
+    const { m } = sandboxGetValues();
+    const canvas = document.getElementById('playgroundCanvas');
+    if (canvas) {
+        canvas.dispatchEvent(new CustomEvent('sandboxanimate', { detail: { matrix: m } }));
+    }
+    sandboxUpdateResult('播放变换动画...');
+    if (AudioSystem && AudioSystem.enabled) AudioSystem.playSectionEnter();
+}
+
+function sandboxClear() {
+    const canvas = document.getElementById('playgroundCanvas');
+    if (canvas) {
+        canvas.dispatchEvent(new CustomEvent('sandboxclear'));
+    }
+    sandboxUpdateResult('画布已清空');
+}
+
+/* ============================================
+   Transform Animation Trigger
+   ============================================ */
+function playTransformAnimation() {
+    // Dispatch event to transforms.js
+    const panel = document.getElementById('transformViz');
+    if (panel) {
+        panel.dispatchEvent(new CustomEvent('playstepanimation'));
+    }
+}
+
+/* ============================================
+   Vector Drag Interaction
+   ============================================ */
+function initVectorDrag(canvasId, onUpdate) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+
+    const state = {
+        vecA: { x: 80, y: -60 },
+        vecB: { x: -60, y: -80 },
+        dragging: null
+    };
+
+    const getMousePos = (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+            x: clientX - rect.left - rect.width / 2,
+            y: rect.height / 2 - (clientY - rect.top)
+        };
+    };
+
+    const findHandle = (x, y) => {
+        const threshold = 15;
+        const distA = Math.hypot(x - state.vecA.x, y - state.vecA.y);
+        const distB = Math.hypot(x - state.vecB.x, y - state.vecB.y);
+        if (distA < threshold) return 'A';
+        if (distB < threshold) return 'B';
+        return null;
+    };
+
+    canvas.addEventListener('mousedown', (e) => {
+        const pos = getMousePos(e);
+        const handle = findHandle(pos.x, pos.y);
+        if (handle) {
+            state.dragging = handle;
+            canvas.style.cursor = 'grabbing';
+        }
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+        const pos = getMousePos(e);
+
+        if (state.dragging) {
+            if (state.dragging === 'A') {
+                state.vecA.x = pos.x;
+                state.vecA.y = pos.y;
+            } else {
+                state.vecB.x = pos.x;
+                state.vecB.y = pos.y;
+            }
+            if (onUpdate) onUpdate(state);
+            drawVectorScene();
+        } else {
+            const handle = findHandle(pos.x, pos.y);
+            canvas.style.cursor = handle ? 'grab' : 'default';
+        }
+    });
+
+    canvas.addEventListener('mouseup', () => {
+        state.dragging = null;
+        canvas.style.cursor = 'default';
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+        state.dragging = null;
+        canvas.style.cursor = 'default';
+    });
+
+    function drawVectorScene() {
+        const setup = VizEngine.setupCanvas(canvasId);
+        if (!setup) return;
+        const { ctx, width, height } = setup;
+        const cx = width / 2;
+        const cy = height / 2;
+
+        ctx.clearRect(0, 0, width, height);
+        VizEngine.drawGrid(ctx, width, height, 30);
+        VizEngine.drawAxes(ctx, width, height);
+
+        // Vector A
+        VizEngine.drawVector(ctx, cx, cy, cx + state.vecA.x, cy - state.vecA.y, VizEngine.colors.sage, 'a', 2.5);
+        VizEngine.drawPoint(ctx, cx + state.vecA.x, cy - state.vecA.y, VizEngine.colors.sage, 6);
+
+        // Vector B
+        VizEngine.drawVector(ctx, cx, cy, cx + state.vecB.x, cy - state.vecB.y, VizEngine.colors.blue, 'b', 2.5);
+        VizEngine.drawPoint(ctx, cx + state.vecB.x, cy - state.vecB.y, VizEngine.colors.blue, 6);
+
+        // Sum vector
+        const sumX = state.vecA.x + state.vecB.x;
+        const sumY = state.vecA.y + state.vecB.y;
+        VizEngine.drawVector(ctx, cx, cy, cx + sumX, cy - sumY, VizEngine.colors.apricot, 'a+b', 2.5);
+
+        // Parallelogram
+        VizEngine.drawParallelogram(ctx, cx, cy, state.vecA.x, -state.vecA.y, state.vecB.x, -state.vecB.y, 'rgba(212,165,116,0.1)', VizEngine.colors.apricot);
+
+        // Update displays
+        document.getElementById('vecAValue').textContent = `[${(state.vecA.x/40).toFixed(2)}, ${(state.vecA.y/40).toFixed(2)}]`;
+        document.getElementById('vecBValue').textContent = `[${(state.vecB.x/40).toFixed(2)}, ${(state.vecB.y/40).toFixed(2)}]`;
+        const dot = state.vecA.x * state.vecB.x + state.vecA.y * state.vecB.y;
+        document.getElementById('dotProductValue').textContent = (dot/1600).toFixed(2);
+    }
+
+    drawVectorScene();
+    return state;
+}
+
+/* ============================================
+   Matrix Grid Drag Interaction
+   ============================================ */
+function initMatrixDrag(canvasId, onUpdate) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+
+    const state = {
+        controlPoints: [
+            { x: 80, y: 0 },   // e1 transformed
+            { x: 0, y: -80 }   // e2 transformed
+        ],
+        dragging: null
+    };
+
+    const getMousePos = (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+            x: clientX - rect.left - rect.width / 2,
+            y: rect.height / 2 - (clientY - rect.top)
+        };
+    };
+
+    const findHandle = (x, y) => {
+        const threshold = 18;
+        for (let i = 0; i < state.controlPoints.length; i++) {
+            const p = state.controlPoints[i];
+            if (Math.hypot(x - p.x, y - p.y) < threshold) return i;
+        }
+        return null;
+    };
+
+    canvas.addEventListener('mousedown', (e) => {
+        const pos = getMousePos(e);
+        const handle = findHandle(pos.x, pos.y);
+        if (handle !== null) {
+            state.dragging = handle;
+            canvas.style.cursor = 'grabbing';
+        }
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+        const pos = getMousePos(e);
+
+        if (state.dragging !== null) {
+            state.controlPoints[state.dragging].x = pos.x;
+            state.controlPoints[state.dragging].y = pos.y;
+            if (onUpdate) onUpdate(state);
+            drawMatrixScene();
+        } else {
+            const handle = findHandle(pos.x, pos.y);
+            canvas.style.cursor = handle !== null ? 'grab' : 'default';
+        }
+    });
+
+    canvas.addEventListener('mouseup', () => {
+        state.dragging = null;
+        canvas.style.cursor = 'default';
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+        state.dragging = null;
+        canvas.style.cursor = 'default';
+    });
+
+    function drawMatrixScene() {
+        const setup = VizEngine.setupCanvas(canvasId);
+        if (!setup) return;
+        const { ctx, width, height } = setup;
+        const cx = width / 2;
+        const cy = height / 2;
+        const scale = 80;
+
+        ctx.clearRect(0, 0, width, height);
+
+        // Draw rubber sheet
+        VizEngine.initRubberSheet(width, height, 25);
+        const matrix = [
+            state.controlPoints[0].x / scale,
+            state.controlPoints[1].x / scale,
+            -state.controlPoints[0].y / scale,
+            -state.controlPoints[1].y / scale
+        ];
+        VizEngine.transformRubberSheet(matrix);
+        VizEngine.drawRubberSheet(ctx, width, height, { showGrid: true, showBasis: true });
+
+        // Draw control points
+        state.controlPoints.forEach((p, i) => {
+            VizEngine.drawPoint(ctx, cx + p.x, cy - p.y, i === 0 ? VizEngine.colors.sage : VizEngine.colors.blue, 8);
+            ctx.strokeStyle = i === 0 ? VizEngine.colors.sage : VizEngine.colors.blue;
+            ctx.lineWidth = 2;
+            ctx.setLineDash([3, 3]);
+            ctx.beginPath();
+            ctx.moveTo(cx + (i === 0 ? scale : 0), cy - (i === 1 ? scale : 0));
+            ctx.lineTo(cx + p.x, cy - p.y);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        });
+
+        // Update matrix inputs
+        document.getElementById('m00').value = matrix[0].toFixed(2);
+        document.getElementById('m01').value = matrix[1].toFixed(2);
+        document.getElementById('m10').value = matrix[2].toFixed(2);
+        document.getElementById('m11').value = matrix[3].toFixed(2);
+    }
+
+    drawMatrixScene();
+    return state;
+}

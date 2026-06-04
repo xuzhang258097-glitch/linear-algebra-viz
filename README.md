@@ -4,7 +4,7 @@
 
 ## 在线访问
 
-**GitHub Pages**: https://你的用户名.github.io/linear-algebra-viz/
+**GitHub Pages**: https://xuzhang258097-glitch.github.io/linear-algebra-viz/
 
 ## 项目特色
 

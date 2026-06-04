@@ -23,7 +23,10 @@ function initTransformViz() {
         rotateAngle: 30,
         scaleX: 1,
         scaleY: 1,
-        shearK: 0.5
+        shearK: 0.5,
+        animating: false,
+        animProgress: 1,
+        stepPhase: 0 // 0: original, 1: first transform, 2: second transform
     };
 
     const houseShape = [
@@ -74,14 +77,44 @@ function initTransformViz() {
         VizEngine.drawGrid(ctx, width, height, scale);
         VizEngine.drawAxes(ctx, width, height);
 
-        const m = getMatrix();
+        let m = getMatrix();
+
+        // Handle step animation for compose mode
+        if (state.mode === 'compose' && state.animating) {
+            const rad = state.rotateAngle * Math.PI / 180;
+            const rot = [
+                Math.cos(rad), -Math.sin(rad),
+                Math.sin(rad), Math.cos(rad)
+            ];
+            const scl = [state.scaleX, 0, 0, state.scaleY];
+
+            if (state.stepPhase === 1) {
+                // First step: rotate
+                const progress = state.animProgress;
+                m = [
+                    VizEngine.lerp(1, rot[0], progress),
+                    VizEngine.lerp(0, rot[1], progress),
+                    VizEngine.lerp(0, rot[2], progress),
+                    VizEngine.lerp(1, rot[3], progress)
+                ];
+            } else if (state.stepPhase === 2) {
+                // Second step: scale after rotate
+                const rotResult = rot;
+                m = [
+                    VizEngine.lerp(rotResult[0], scl[0] * rotResult[0] + scl[1] * rotResult[2], state.animProgress),
+                    VizEngine.lerp(rotResult[1], scl[0] * rotResult[1] + scl[1] * rotResult[3], state.animProgress),
+                    VizEngine.lerp(rotResult[2], scl[2] * rotResult[0] + scl[3] * rotResult[2], state.animProgress),
+                    VizEngine.lerp(rotResult[3], scl[2] * rotResult[1] + scl[3] * rotResult[3], state.animProgress)
+                ];
+            }
+        }
 
         // Original shape (faint)
         const original = houseShape.map(p => ({
             x: cx + p.x * scale,
             y: cy - p.y * scale
         }));
-        VizEngine.drawPolygon(ctx, original, 'rgba(107, 140, 174, 0.1)', VizEngine.colors.blueLight, 1);
+        VizEngine.drawPolygon(ctx, original, 'rgba(107, 140, 174, 0.08)', VizEngine.colors.blueLight, 1);
 
         // Transformed shape
         const transformed = houseShape.map(p => {
@@ -105,10 +138,55 @@ function initTransformViz() {
 
         VizEngine.drawPolygon(ctx, transformed, fillMap[state.mode], colorMap[state.mode], 2.5);
 
-        // Draw transformed grid for emphasis
-        VizEngine.drawTransformedGrid(ctx, width, height, m, scale);
+        // Draw rubber sheet plane
+        VizEngine.initRubberSheet(width, height, 25);
+        VizEngine.transformRubberSheet(m);
+        VizEngine.drawRubberSheet(ctx, width, height, { showGrid: true, showBasis: true, color: colorMap[state.mode], opacity: 0.25 });
+
+        // Step indicator for compose mode
+        if (state.mode === 'compose' && state.animating) {
+            ctx.save();
+            ctx.fillStyle = colorMap.compose;
+            ctx.font = 'bold 14px Outfit, sans-serif';
+            ctx.textAlign = 'center';
+            const stepText = state.stepPhase === 1 ? '步骤 1: 旋转' : '步骤 2: 缩放';
+            ctx.fillText(stepText, cx, 30);
+            ctx.restore();
+        }
 
         ctx.restore();
+    }
+
+    function playStepAnimation() {
+        if (state.mode !== 'compose') return;
+
+        state.animating = true;
+        state.stepPhase = 1;
+        state.animProgress = 0;
+
+        // Step 1: Rotate animation
+        VizEngine.animate((t) => {
+            state.animProgress = t;
+            draw();
+        }, 1200, () => {
+            // Step 2: Scale animation
+            state.stepPhase = 2;
+            state.animProgress = 0;
+
+            setTimeout(() => {
+                VizEngine.animate((t) => {
+                    state.animProgress = t;
+                    draw();
+                }, 1200, () => {
+                    state.animating = false;
+                    state.stepPhase = 0;
+                    draw();
+                    if (AudioSystem && AudioSystem.enabled) AudioSystem.playSuccess();
+                });
+            }, 500);
+        });
+
+        if (AudioSystem && AudioSystem.enabled) AudioSystem.playSectionEnter();
     }
 
     // Controls
@@ -121,6 +199,11 @@ function initTransformViz() {
         document.getElementById('rotateControl').style.display = 'none';
         document.getElementById('scaleControl').style.display = 'none';
         document.getElementById('shearControl').style.display = 'none';
+
+        const animControl = document.getElementById('composeAnimControl');
+        if (animControl) {
+            animControl.style.display = state.mode === 'compose' ? 'flex' : 'none';
+        }
 
         if (state.mode === 'rotate' || state.mode === 'compose') {
             document.getElementById('rotateControl').style.display = 'flex';
@@ -173,9 +256,22 @@ function initTransformViz() {
     const vizPanel = panel.closest('.viz-panel');
     vizPanel.addEventListener('vizchange', (e) => {
         state.mode = e.detail.type;
+        state.animating = false;
+        state.stepPhase = 0;
         updateControls();
         draw();
+
+        // Auto-play animation when switching to compose mode
+        if (state.mode === 'compose') {
+            setTimeout(playStepAnimation, 300);
+        }
+
         if (AudioSystem && AudioSystem.enabled) AudioSystem.playClick();
+    });
+
+    // Listen for external animation trigger
+    panel.addEventListener('playstepanimation', () => {
+        playStepAnimation();
     });
 
     updateControls();

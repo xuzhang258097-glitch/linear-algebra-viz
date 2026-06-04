@@ -165,6 +165,51 @@ function initPlaygroundCanvas() {
         draw();
     });
 
+    // Sandbox console events
+    canvas.addEventListener('sandboxvector', (e) => {
+        state.vectors = [{ x: e.detail.vector[0], y: e.detail.vector[1] }];
+        draw();
+    });
+
+    canvas.addEventListener('sandboxmatrix', (e) => {
+        state.matrix = e.detail.matrix;
+        // Animate transition
+        const startMatrix = [...state.matrix];
+        VizEngine.animate((t) => {
+            state.matrix = startMatrix.map((v, i) => VizEngine.lerp(state.matrix[i], v, t));
+            draw();
+        }, 800);
+    });
+
+    canvas.addEventListener('sandboxscalar', (e) => {
+        const { vector, scalar, result } = e.detail;
+        state.vectors = [
+            { x: vector[0], y: vector[1] },
+            { x: result[0], y: result[1] }
+        ];
+        draw();
+    });
+
+    canvas.addEventListener('sandboxanimate', (e) => {
+        const targetMatrix = e.detail.matrix;
+        const startMatrix = [...state.matrix];
+        VizEngine.animate((t) => {
+            state.matrix = [
+                VizEngine.lerp(startMatrix[0], targetMatrix[0], t),
+                VizEngine.lerp(startMatrix[1], targetMatrix[1], t),
+                VizEngine.lerp(startMatrix[2], targetMatrix[2], t),
+                VizEngine.lerp(startMatrix[3], targetMatrix[3], t)
+            ];
+            draw();
+        }, 1500);
+    });
+
+    canvas.addEventListener('sandboxclear', () => {
+        state.vectors = [];
+        state.matrix = [1, 0, 0, 1];
+        draw();
+    });
+
     // Initial draw
     // Add a default vector
     state.vectors.push({ x: 2, y: 1 });
