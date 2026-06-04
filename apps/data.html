@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据压缩 — LinearViz</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+    <nav class="main-nav scrolled" style="padding:1rem 2.5rem;">
+        <a href="../index.html#applications" class="back-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            返回工程应用
+        </a>
+    </nav>
+
+    <header class="app-detail-header">
+        <span class="section-tag">工程应用</span>
+        <h1>数据压缩中的线性代数</h1>
+        <p>SVD、低秩近似、主成分分析——用矩阵分解实现高效数据表示</p>
+    </header>
+
+    <main class="app-detail-body">
+        <section class="case-section">
+            <h3>核心原理</h3>
+            <div class="case-card">
+                <h4>奇异值分解（SVD）</h4>
+                <p>任何矩阵 $A$ 都可以分解为三个矩阵的乘积：$A = U \Sigma V^T$。其中 $U$ 和 $V$ 是正交矩阵，$\Sigma$ 是对角矩阵，对角线上的元素称为<strong>奇异值</strong>，按从大到小排列。</p>
+                <p>奇异值代表了矩阵在不同方向上的"重要性"。如果只保留前 $k$ 个最大的奇异值，丢弃其余的小值，就得到了原矩阵的<strong>最佳低秩近似</strong>——这就是数据压缩的数学基础。</p>
+            </div>
+            <div class="case-card">
+                <h4>低秩近似与信息保留</h4>
+                <p> Eckart-Young-Mirsky 定理证明：在所有秩不超过 $k$ 的矩阵中，SVD 截断得到的矩阵是原矩阵的最佳近似（以Frobenius范数衡量）。</p>
+                <p>这意味着：如果我们发现数据矩阵的奇异值迅速衰减（前几个值很大，后面的都很小），那么数据本质上只有"几个重要维度"，其余都是噪声或冗余。</p>
+            </div>
+        </section>
+
+        <section class="case-section">
+            <h3>实体案例</h3>
+            <div class="case-card">
+                <h4>案例一：图像压缩（MATLAB 经典示例）</h4>
+                <p>一张 1000x1000 的灰度图像可以看作一个 1000x1000 的矩阵。对其进行SVD后，通常前50个奇异值就包含了90%以上的图像信息。只存储 $U_{1000 \times 50}$、$\Sigma_{50 \times 50}$、$V_{50 \times 1000}$，存储量从100万像素减少到约10万，压缩比达10:1。</p>
+            </div>
+            <div class="case-card">
+                <h4>案例二：潜在语义分析（LSA）</h4>
+                <p>在信息检索中，构建"文档-词语"矩阵（行是文档，列是词语，值是词频），对其进行SVD截断。这样可以将同义词映射到相同的"潜在语义空间"中，大幅提升搜索质量。Google 的早期搜索系统就使用了类似技术。</p>
+            </div>
+            <div class="case-card">
+                <h4>案例三：Netflix  Prize 推荐算法</h4>
+                <p>2006年Netflix悬赏100万美元奖励能将推荐精度提升10%的算法。获奖团队的核心方法之一就是将用户-电影评分矩阵进行低秩分解，通过拟合低秩结构来填补缺失的评分。</p>
+            </div>
+        </section>
+
+        <section class="case-section">
+            <h3>研究论文</h3>
+            <div class="paper-list">
+                <div class="paper-item">
+                    <span class="paper-year">1936</span>
+                    <div class="paper-info">
+                        <div class="paper-title">The Approximation of One Matrix by Another of Lower Rank (Eckart-Young)</div>
+                        <div class="paper-authors">Eckart & Young, Princeton</div>
+                        <a href="https://doi.org/10.1007/BF02288367" target="_blank" class="paper-link">查看论文 ↗</a>
+                    </div>
+                </div>
+                <div class="paper-item">
+                    <span class="paper-year">1990</span>
+                    <div class="paper-info">
+                        <div class="paper-title">Indexing by Latent Semantic Analysis</div>
+                        <div class="paper-authors">Deerwester et al., Bellcore</div>
+                        <a href="https://doi.org/10.1002/(SICI)1097-4571(199009)41:6%3C391::AID-ASI1%3E3.0.CO;2-9" target="_blank" class="paper-link">查看论文 ↗</a>
+                    </div>
+                </div>
+                <div class="paper-item">
+                    <span class="paper-year">2009</span>
+                    <div class="paper-info">
+                        <div class="paper-title">Matrix Completion and Large-Scale SGD</div>
+                        <div class="paper-authors">Netflix Prize Winning Team (BellKor)</div>
+                        <a href="https://www.netflixprize.com/" target="_blank" class="paper-link">查看论文 ↗</a>
+                    </div>
+                </div>
+                <div class="paper-item">
+                    <span class="paper-year">2000</span>
+                    <div class="paper-info">
+                        <div class="paper-title">Image Compression via SVD: A Survey</div>
+                        <div class="paper-authors">Andrews & Patterson</div>
+                        <a href="https://ieeexplore.ieee.org/document/83306" target="_blank" class="paper-link">查看论文 ↗</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="footer-bottom" style="border:none;padding-top:0;">
+            <p>LinearViz — 线性代数可视化教学平台</p>
+        </div>
+    </footer>
+
+    <script>document.addEventListener('DOMContentLoaded', () => { if(typeof renderMathInElement !== 'undefined') renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false}); });</script>
+</body>
+</html>

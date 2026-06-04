@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>计算机图形学 — LinearViz</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+    <nav class="main-nav scrolled" style="padding:1rem 2.5rem;">
+        <a href="../index.html#applications" class="back-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            返回工程应用
+        </a>
+    </nav>
+
+    <header class="app-detail-header">
+        <span class="section-tag">工程应用</span>
+        <h1>计算机图形学中的线性代数</h1>
+        <p>从3D模型到2D屏幕，矩阵运算驱动着每一帧画面的渲染</p>
+    </header>
+
+    <main class="app-detail-body">
+        <section class="case-section">
+            <h3>核心原理</h3>
+            <div class="case-card">
+                <h4>模型-视图-投影变换（MVP）</h4>
+                <p>在3D渲染管线中，每个顶点需要经过三次矩阵变换才能显示在屏幕上：</p>
+                <p>（1）<strong>模型变换</strong>：将模型从本地坐标系移动到世界坐标系；<br>（2）<strong>视图变换</strong>：根据摄像机位置调整坐标；<br>（3）<strong>投影变换</strong>：将3D场景投影到2D屏幕上。</p>
+                <div class="formula">$$ \vec{v}_{screen} = P \cdot V \cdot M \cdot \vec{v}_{local} $$</div>
+                <p>现代GPU每秒可以执行数十亿次这样的矩阵-向量乘法，这就是游戏能够实时渲染复杂3D场景的原因。</p>
+            </div>
+            <div class="case-card">
+                <h4>四元数与旋转</h4>
+                <p>3D旋转如果用欧拉角表示，会出现"万向锁"问题（Gimbal Lock）。四元数是一种扩展的复数，用4个分量表示任意3D旋转，避免了万向锁，且插值更平滑。</p>
+            </div>
+        </section>
+
+        <section class="case-section">
+            <h3>实体案例</h3>
+            <div class="case-card">
+                <h4>案例一：Unity 引擎的 Transform 组件</h4>
+                <p>Unity 中每个游戏对象都有 Transform 组件，内部使用 4x4 齐次变换矩阵存储位置、旋转和缩放。当你拖动场景中的物体时，实际上是在修改这个矩阵的参数。</p>
+            </div>
+            <div class="case-card">
+                <h4>案例二：光线追踪中的射线-三角形求交</h4>
+                <p>NVIDIA RTX 显卡通过硬件加速光线追踪，其核心运算是求解射线与三角形平面的交点，涉及大量向量点积和叉积运算。</p>
+            </div>
+            <div class="case-card">
+                <h4>案例三：Photoshop 的图像变换</h4>
+                <p>你在 Photoshop 中旋转、缩放或倾斜图层时，软件在背后构建一个 3x3 的变换矩阵，然后对图像中的每个像素应用这个矩阵，计算出新的像素位置。</p>
+            </div>
+        </section>
+
+        <section class="case-section">
+            <h3>研究论文</h3>
+            <div class="paper-list">
+                <div class="paper-item">
+                    <span class="paper-year">1992</span>
+                    <div class="paper-info">
+                        <div class="paper-title">Viewing Transformations as a Matrix Problem</div>
+                        <div class="paper-authors">Jim Blinn, Microsoft Research</div>
+                        <a href="https://dl.acm.org/doi/10.1145/130881.130882" target="_blank" class="paper-link">查看论文 ↗</a>
+                    </div>
+                </div>
+                <div class="paper-item">
+                    <span class="paper-year">2018</span>
+                    <div class="paper-info">
+                        <div class="paper-title">Ray Tracing in One Weekend</div>
+                        <div class="paper-authors">Peter Shirley</div>
+                        <a href="https://raytracing.github.io/books/RayTracingInOneWeekend.html" target="_blank" class="paper-link">查看论文 ↗</a>
+                    </div>
+                </div>
+                <div class="paper-item">
+                    <span class="paper-year">2006</span>
+                    <div class="paper-info">
+                        <div class="paper-title">Stable Fluids for Real-Time Fluid Simulation</div>
+                        <div class="paper-authors">Jos Stam, Autodesk</div>
+                        <a href="https://www.dgp.toronto.edu/public_user/stam/reality/Research/pdf/ns.pdf" target="_blank" class="paper-link">查看论文 ↗</a>
+                    </div>
+                </div>
+                <div class="paper-item">
+                    <span class="paper-year">2020</span>
+                    <div class="paper-info">
+                        <div class="paper-title">NeRF: Representing Scenes as Neural Radiance Fields</div>
+                        <div class="paper-authors">Mildenhall et al., UC Berkeley</div>
+                        <a href="https://arxiv.org/abs/2003.08934" target="_blank" class="paper-link">查看论文 ↗</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="footer-bottom" style="border:none;padding-top:0;">
+            <p>LinearViz — 线性代数可视化教学平台</p>
+        </div>
+    </footer>
+
+    <script>document.addEventListener('DOMContentLoaded', () => { if(typeof renderMathInElement !== 'undefined') renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false}); });</script>
+</body>
+</html>
