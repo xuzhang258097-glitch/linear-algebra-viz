@@ -233,6 +233,44 @@ img, canvas, svg {
     background: rgba(0, 0, 0, 0.04);
 }
 
+/* Mobile nav toggle */
+.nav-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 44px;
+    height: 44px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    gap: 5px;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.nav-toggle span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--text-primary);
+    border-radius: 2px;
+    transition: all 0.3s var(--ease-smooth);
+    transform-origin: center;
+}
+
+.nav-toggle.open span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.nav-toggle.open span:nth-child(2) {
+    opacity: 0;
+}
+
+.nav-toggle.open span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
 .progress-bar {
     height: 100%;
     width: 0%;
@@ -1783,42 +1821,407 @@ a.app-card .card-link {
 }
 
 @media (max-width: 768px) {
+    :root {
+        --section-spacing: 3rem;
+    }
+
     .main-nav {
-        padding: 0.75rem 1rem;
+        padding: 0.5rem 1rem;
+    }
+
+    .nav-toggle {
+        display: flex;
     }
 
     .nav-links {
-        display: none;
+        position: fixed;
+        top: 60px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        flex-direction: column;
+        align-items: stretch;
+        padding: 1.5rem;
+        gap: 0.5rem;
+        transform: translateX(100%);
+        transition: transform 0.35s var(--ease-smooth);
+        display: flex;
+        z-index: 899;
+    }
+
+    .nav-links.open {
+        transform: translateX(0);
+    }
+
+    .nav-link {
+        padding: 1rem 1.25rem;
+        font-size: 1rem;
+        border-radius: 12px;
+    }
+
+    .hero {
+        min-height: 100svh;
+        padding: 5rem 1rem 3rem;
+    }
+
+    .hero-content h1 {
+        font-size: clamp(1.75rem, 7vw, 2.5rem);
+    }
+
+    .hero-content p {
+        font-size: 0.9375rem;
     }
 
     .hero-stats {
-        gap: 1.5rem;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .stat-number {
+        font-size: 1.5rem;
     }
 
     .hero-actions {
         flex-direction: column;
-        align-items: center;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .hero-actions .btn {
+        width: 100%;
+        justify-content: center;
+        padding: 0.875rem 1.5rem;
+        min-height: 48px;
+    }
+
+    .section {
+        padding: var(--section-spacing) 1rem;
+    }
+
+    .section-header {
+        margin-bottom: 2rem;
+    }
+
+    .section-title {
+        font-size: clamp(1.5rem, 5vw, 2rem);
     }
 
     .topic-grid {
         grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+
+    .topic-card {
+        padding: 1.25rem;
+    }
+
+    .card-preview {
+        height: 140px;
     }
 
     .app-showcase {
         grid-template-columns: 1fr;
+        gap: 1.25rem;
     }
 
-    .section {
-        padding: 3rem 1rem;
+    .app-card {
+        padding: 1.5rem;
+    }
+
+    .detail-header {
+        padding: 5rem 0 1.5rem;
+    }
+
+    .detail-title {
+        font-size: clamp(1.25rem, 4vw, 1.75rem);
+    }
+
+    .detail-body {
+        gap: 2rem;
+    }
+
+    .concept-block {
+        padding: 1.25rem;
+    }
+
+    .concept-block h3 {
+        font-size: 1.1rem;
+    }
+
+    .concept-block p {
+        font-size: 0.9rem;
+    }
+
+    .exercise-block {
+        padding: 1.25rem;
+    }
+
+    .choice-item {
+        padding: 0.875rem 1rem;
+        min-height: 48px;
+        font-size: 0.9rem;
+    }
+
+    .viz-panel {
+        padding: 1rem;
+    }
+
+    .viz-toolbar {
+        flex-wrap: wrap;
+        gap: 0.375rem;
+    }
+
+    .viz-btn {
+        padding: 0.4rem 0.75rem;
+        font-size: 0.8rem;
+        min-height: 36px;
+    }
+
+    .viz-controls {
+        padding: 0.875rem;
+    }
+
+    .control-group {
+        gap: 0.375rem;
+    }
+
+    .control-group label {
+        font-size: 0.78rem;
+    }
+
+    .matrix-editor input[type="number"] {
+        width: 48px;
+        height: 40px;
+        font-size: 0.875rem;
+    }
+
+    .playground-container {
+        border-radius: 16px;
+    }
+
+    .playground-sidebar {
+        padding: 1rem;
+    }
+
+    .playground-main {
+        padding: 1rem;
+    }
+
+    .sandbox-console {
+        padding: 1rem;
+    }
+
+    .console-actions {
+        flex-wrap: wrap;
+    }
+
+    .console-btn {
+        flex: 1 1 calc(50% - 0.5rem);
+        min-height: 44px;
+        font-size: 0.8rem;
+    }
+
+    .input-row {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .input-row input[type="number"] {
+        height: 40px;
+        min-width: 60px;
+    }
+
+    .quiz-panel {
+        right: 0.75rem;
+        bottom: 0.75rem;
+        left: 0.75rem;
+        width: auto;
+        max-width: none;
+    }
+
+    .quiz-panel.collapsed {
+        left: auto;
+        width: auto;
     }
 
     .footer-content {
         flex-direction: column;
-        gap: 2rem;
+        gap: 1.5rem;
+        text-align: center;
+    }
+
+    .footer-links {
+        flex-wrap: wrap;
+        justify-content: center;
     }
 
     .concept-block:hover {
         transform: none;
+    }
+
+    .detail-labels {
+        margin-bottom: 0.875rem;
+    }
+
+    .drag-hint {
+        font-size: 0.6875rem;
+        padding: 0.375rem 0.625rem;
+    }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+    .main-nav {
+        padding: 0.375rem 0.75rem;
+    }
+
+    .nav-brand .brand-text {
+        font-size: 1rem;
+    }
+
+    .nav-brand .brand-icon svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .hero-content h1 {
+        font-size: 1.5rem;
+    }
+
+    .hero-content p {
+        font-size: 0.875rem;
+    }
+
+    .section {
+        padding: 2rem 0.75rem;
+    }
+
+    .section-title {
+        font-size: 1.375rem;
+    }
+
+    .topic-card {
+        padding: 1rem;
+    }
+
+    .card-preview {
+        height: 120px;
+    }
+
+    .concept-block {
+        padding: 1rem;
+        border-radius: 14px;
+    }
+
+    .concept-block h3 {
+        font-size: 1rem;
+    }
+
+    .exercise-block {
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+
+    .exercise-header {
+        margin-bottom: 0.75rem;
+    }
+
+    .exercise-desc {
+        font-size: 0.85rem;
+    }
+
+    .choice-item {
+        padding: 0.75rem;
+        min-height: 44px;
+    }
+
+    .viz-panel {
+        padding: 0.75rem;
+        border-radius: 14px;
+    }
+
+    .viz-toolbar {
+        gap: 0.25rem;
+    }
+
+    .viz-btn {
+        padding: 0.35rem 0.625rem;
+        font-size: 0.75rem;
+        min-height: 34px;
+    }
+
+    .viz-controls {
+        padding: 0.75rem;
+    }
+
+    .matrix-editor input[type="number"] {
+        width: 44px;
+        height: 38px;
+        font-size: 0.8rem;
+    }
+
+    .console-btn {
+        flex: 1 1 100%;
+        min-height: 42px;
+    }
+
+    .sandbox-matrix {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .sandbox-matrix input {
+        width: 100%;
+    }
+
+    .quiz-panel {
+        border-radius: 14px;
+        padding: 0.75rem;
+    }
+
+    .quiz-panel.collapsed {
+        padding: 0.75rem 1rem;
+    }
+
+    .det-display {
+        flex-direction: column;
+        gap: 0.25rem;
+        text-align: center;
+    }
+
+    .eigen-item {
+        flex-direction: column;
+        gap: 0.125rem;
+        text-align: center;
+    }
+}
+
+/* Touch device optimizations */
+@media (pointer: coarse) {
+    .choice-item,
+    .viz-btn,
+    .console-btn,
+    .tool-btn,
+    .preset-btn,
+    .exercise-reset-btn,
+    .quiz-reset-all {
+        min-height: 44px;
+    }
+
+    .nav-link {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+
+    .matrix-editor input[type="number"] {
+        min-height: 44px;
+    }
+
+    .input-row input[type="number"] {
+        min-height: 44px;
     }
 }
 
